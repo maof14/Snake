@@ -11,6 +11,10 @@
 /* t ex */
 .DEF rTemp         = r16
 .DEF rDirection    = r23
+.DEF rMellan       = r17
+.DEF rPORTB        = r18
+.DEF rPORTC        = r19
+.DEF rPORTD        = r20
 // …
 // */
 // [En lista med konstanter]
@@ -52,8 +56,10 @@ init:
 	out DDRB, r16
 	out DDRC, r16
 	out DDRD, r16
+	cbi DDRC, PC4
+	cbi DDRC, PC5 //DDR klar
 
-loop:
+/* loop:
 	// ldi r16, 0x0006
 	out PORTB, r16
 	//out PORTC, r16
@@ -67,4 +73,44 @@ loop:
 
 	
 	rjmp    loop
+	nop */
+
+loop:
+
+	ldi YH, HIGH(matrix)
+	ldi YL, LOW(matrix)
+	st Y, r16
+
+	ld rMellan, Y
+
+	bst rMellan, 7
+	bld rPORTD, 6
+
+	bst rMellan, 6
+	bld rPORTD, 7
+	
+	bst rMellan, 5
+	bld rPORTB, 0
+	
+	bst rMellan, 4
+	bld rPORTB, 1
+	
+	bst rMellan, 3
+	bld rPORTB, 2
+	
+	bst rMellan, 2
+	bld rPORTB, 3
+	
+	bst rMellan, 1
+	bld rPORTB, 4
+	
+	bst rMellan, 0
+	bld rPORTB, 5
+
+	out PORTD, RPORTD
+	out PORTB, RPORTB
+
+	sbi PORTC, PC0
+
+	rjmp	loop
 	nop
