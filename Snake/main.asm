@@ -53,16 +53,18 @@ init:
 	out DDRC, r16
 	out DDRD, r16
 
-	//sbi LED, (1<<)
-
+loop:
 	// ldi r16, 0x0006
 	out PORTB, r16
-	out PORTC, r16
-	out PORTD, r16
+	//out PORTC, r16
+	//out PORTD, r16
 	// ldi r16, 0x0001
+
+	sbi PORTC, PC0
+	//sbi PORTD, PD6
+	sbi PORTD, PD6
+	sbi PORTD, PD7
+
 	
-
-
-//loop:
-  //  rjmp    loop
-	//nop
+	rjmp    loop
+	nop
