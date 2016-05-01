@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed Apr 27 16:17:16 2016
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Sun May 01 15:41:51 2016
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
                  
@@ -995,8 +995,8 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
                  // [En lista med registerdefinitioner]
                  /* t ex */
                  .DEF rTemp         = r16
-                 .DEF rDirection    = r23
-                 .DEF rMellan       = r17
+                 .DEF rDirection    = r23 ; Används inte
+                 .DEF rMellan       = r17 ; Används för mellanlagring
                  .DEF rPORTB        = r18
                  .DEF rPORTC        = r19
                  .DEF rPORTD        = r20
@@ -1037,11 +1037,13 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
 000037 bf0d           out SPL, rTemp
                  // */
                  
-000038 ef0f      	ldi r16, 0xff
-000039 b904      	out DDRB, r16
+000038 ef0f      	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
+000039 b904      	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
 00003a b907      	out DDRC, r16
 00003b b90a      	out DDRD, r16
-00003c 983c      	cbi DDRC, PC4
+                 
+                 	; Sätt även joystickar till output?
+00003c 983c      	cbi DDRC, PC4 ; 
 00003d 983d      	cbi DDRC, PC5 //DDR klar
                  
                  /* loop:
@@ -1062,31 +1064,43 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
                  
                  loop:
                  
+                 	; Få översta raden att lysa genom bitmanipulering, bst / bld
+                 
 00003e e0d1      	ldi YH, HIGH(matrix)
 00003f e0c0      	ldi YL, LOW(matrix)
-000040 8308      	st Y, r16
+000040 8308      	st Y, r16 ; Y = 11111111
                  
-000041 8118      	ld rMellan, Y
+000041 8118      	ld rMellan, Y ; rMellan = Y
                  
-000042 fb17      	bst rMellan, 7
+                 	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+                 	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
+                 
+000042 fb17      	bst rMellan, 7 ; MSB
 000043 f946      	bld rPORTD, 6
+                 
 000044 fb16      	bst rMellan, 6
 000045 f947      	bld rPORTD, 7
+                 	
 000046 fb15      	bst rMellan, 5
 000047 f920      	bld rPORTB, 0
+                 	
 000048 fb14      	bst rMellan, 4
 000049 f921      	bld rPORTB, 1
+                 	
 00004a fb13      	bst rMellan, 3
 00004b f922      	bld rPORTB, 2
+                 	
 00004c fb12      	bst rMellan, 2
 00004d f923      	bld rPORTB, 3
+                 	
 00004e fb11      	bst rMellan, 1
 00004f f924      	bld rPORTB, 4
-000050 fb10      	bst rMellan, 0
+                 	
+000050 fb10      	bst rMellan, 0 ; LSB
 000051 f925      	bld rPORTB, 5
                  
-000052 b94b      	out PORTD, RPORTD
-000053 b925      	out PORTB, RPORTB
+000052 b94b      	out PORTD, rPORTD
+000053 b925      	out PORTB, rPORTB
                  
 000054 9a40      	sbi PORTC, PC0
                  

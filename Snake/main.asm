@@ -10,8 +10,8 @@
 // [En lista med registerdefinitioner]
 /* t ex */
 .DEF rTemp         = r16
-.DEF rDirection    = r23
-.DEF rMellan       = r17
+.DEF rDirection    = r23 ; Används inte
+.DEF rMellan       = r17 ; Används för mellanlagring
 .DEF rPORTB        = r18
 .DEF rPORTC        = r19
 .DEF rPORTD        = r20
@@ -52,11 +52,13 @@ init:
      out SPL, rTemp
 // */
 
-	ldi r16, 0xff
-	out DDRB, r16
+	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
+	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
 	out DDRC, r16
 	out DDRD, r16
-	cbi DDRC, PC4
+
+	; Sätt även joystickar till output?
+	cbi DDRC, PC4 ; 
 	cbi DDRC, PC5 //DDR klar
 
 /* loop:
@@ -77,13 +79,18 @@ init:
 
 loop:
 
+	; Få översta raden att lysa genom bitmanipulering, bst / bld
+
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
-	st Y, r16
+	st Y, r16 ; Y = 11111111
 
-	ld rMellan, Y
+	ld rMellan, Y ; rMellan = Y
 
-	bst rMellan, 7
+	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
+
+	bst rMellan, 7 ; MSB
 	bld rPORTD, 6
 
 	bst rMellan, 6
@@ -104,12 +111,14 @@ loop:
 	bst rMellan, 1
 	bld rPORTB, 4
 	
-	bst rMellan, 0
+	bst rMellan, 0 ; LSB
 	bld rPORTB, 5
 
-	out PORTD, RPORTD
-	out PORTB, RPORTB
+	; Outputta den manipulerade bitsträngen?
+	out PORTD, rPORTD
+	out PORTB, rPORTB
 
+	; ?
 	sbi PORTC, PC0
 
 	rjmp	loop
