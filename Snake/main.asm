@@ -94,30 +94,32 @@ loop:
 
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
-	st Y, r16 ; Y = 11111111
 
-	/*sbi PORTC, PC0
-	rcall Laddarad
-	st Y, r22
-	rcall Laddarad
-	cbi PORTC, PC0
-	st Y, r21
-	sbi PORTC, PC1
-	rcall Laddarad
-	st Y, r22
-	rcall Laddarad
-	cbi PORTC, PC1*/
-	st Y, r16
-	sbi PORTD, PD2
-	rcall Laddarad
-	cbi PORTD, PD2
-	st Y, r22
-	rcall Laddarad
+	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
+	/*sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
+	rcall Laddarad		; Kör subrutin
+	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
+	rcall Laddarad		; Kör subrutin
+	cbi PORTC, PC0		; Avaktivera PORTC, bit 1 (index 0)
+
+	st Y, r21			; Speca igen vilka lampor som skall lysa (00000001)
+	sbi PORTC, PC1		; Aktivera PORTC
+	rcall Laddarad		; Kör subrutin
+	st Y, r22			; 00000000
+	rcall Laddarad		; 
+	cbi PORTC, PC1*/	; Avaktivera
+
+	st Y, r16			; 
+	sbi PORTD, PD2		; 
+	rcall Laddarad		; 
+	cbi PORTD, PD2		; 
+	st Y, r22			; 
+	rcall Laddarad		; 
 
 	rjmp	loop
 	nop
 
-
+	; Subrutin för att tända specade lampor
 Laddarad:
 	ld rMellan, Y ; rMellan = Y
 
