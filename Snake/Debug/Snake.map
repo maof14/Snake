@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Sun May 01 15:41:51 2016
+AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 02 10:37:15 2016
 
 
 EQU  SIGNATURE_000 0000001e
@@ -708,4 +708,5 @@ EQU  LED          00000006
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
-CSEG loop         0000003e
+CSEG loop         00000048
+CSEG Laddarad     00000053

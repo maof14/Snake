@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Sun May 01 15:41:51 2016
+AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 02 10:37:15 2016
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
                  
@@ -1036,15 +1036,17 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
 000036 ef0f           ldi rTemp, LOW(RAMEND)
 000037 bf0d           out SPL, rTemp
                  // */
+                 	
+000038 e060      	ldi r22, 0x00
+000039 e051      	ldi r21, 0x01
+00003a ef0f      	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
+00003b b904      	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
+00003c b907      	out DDRC, r16
+00003d b90a      	out DDRD, r16
                  
-000038 ef0f      	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
-000039 b904      	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
-00003a b907      	out DDRC, r16
-00003b b90a      	out DDRD, r16
-                 
-                 	; Sätt även joystickar till output?
-00003c 983c      	cbi DDRC, PC4 ; 
-00003d 983d      	cbi DDRC, PC5 //DDR klar
+                 	; Sätter joystickar till input!
+00003e 983c      	cbi DDRC, PC4 ; 
+00003f 983d      	cbi DDRC, PC5 //DDR klar
                  
                  /* loop:
                  	// ldi r16, 0x0006
@@ -1062,49 +1064,79 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
                  	rjmp    loop
                  	nop */
                  
+000040 9840      	cbi PORTC, PC0
+000041 9841      	cbi PORTC, PC1
+000042 9842      	cbi PORTC, PC2
+000043 9843      	cbi PORTC, PC3
+000044 985a      	cbi PORTD, PD2
+000045 985b      	cbi PORTD, PD3
+000046 985c      	cbi PORTD, PD4
+000047 985d      	cbi PORTD, PD5
+                 
                  loop:
                  
                  	; Få översta raden att lysa genom bitmanipulering, bst / bld
                  
-00003e e0d1      	ldi YH, HIGH(matrix)
-00003f e0c0      	ldi YL, LOW(matrix)
-000040 8308      	st Y, r16 ; Y = 11111111
+000048 e0d1      	ldi YH, HIGH(matrix)
+000049 e0c0      	ldi YL, LOW(matrix)
+00004a 8308      	st Y, r16 ; Y = 11111111
                  
-000041 8118      	ld rMellan, Y ; rMellan = Y
+                 	/*sbi PORTC, PC0
+                 	rcall Laddarad
+                 	st Y, r22
+                 	rcall Laddarad
+                 	cbi PORTC, PC0
+                 	st Y, r21
+                 	sbi PORTC, PC1
+                 	rcall Laddarad
+                 	st Y, r22
+                 	rcall Laddarad
+                 	cbi PORTC, PC1*/
+00004b 8308      	st Y, r16
+00004c 9a5a      	sbi PORTD, PD2
+00004d d005      	rcall Laddarad
+00004e 985a      	cbi PORTD, PD2
+00004f 8368      	st Y, r22
+000050 d002      	rcall Laddarad
+                 
+000051 cff6      	rjmp	loop
+000052 0000      	nop
+                 
+                 
+                 Laddarad:
+000053 8118      	ld rMellan, Y ; rMellan = Y
                  
                  	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
                  	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
                  
-000042 fb17      	bst rMellan, 7 ; MSB
-000043 f946      	bld rPORTD, 6
+000054 fb17      	bst rMellan, 7 ; MSB
+000055 f946      	bld rPORTD, 6
                  
-000044 fb16      	bst rMellan, 6
-000045 f947      	bld rPORTD, 7
+000056 fb16      	bst rMellan, 6
+000057 f947      	bld rPORTD, 7
                  	
-000046 fb15      	bst rMellan, 5
-000047 f920      	bld rPORTB, 0
+000058 fb15      	bst rMellan, 5
+000059 f920      	bld rPORTB, 0
                  	
-000048 fb14      	bst rMellan, 4
-000049 f921      	bld rPORTB, 1
+00005a fb14      	bst rMellan, 4
+00005b f921      	bld rPORTB, 1
                  	
-00004a fb13      	bst rMellan, 3
-00004b f922      	bld rPORTB, 2
+00005c fb13      	bst rMellan, 3
+00005d f922      	bld rPORTB, 2
                  	
-00004c fb12      	bst rMellan, 2
-00004d f923      	bld rPORTB, 3
+00005e fb12      	bst rMellan, 2
+00005f f923      	bld rPORTB, 3
                  	
-00004e fb11      	bst rMellan, 1
-00004f f924      	bld rPORTB, 4
+000060 fb11      	bst rMellan, 1
+000061 f924      	bld rPORTB, 4
                  	
-000050 fb10      	bst rMellan, 0 ; LSB
-000051 f925      	bld rPORTB, 5
+000062 fb10      	bst rMellan, 0 ; LSB
+000063 f925      	bld rPORTB, 5
                  
-000052 b94b      	out PORTD, rPORTD
-000053 b925      	out PORTB, rPORTB
+                 	; Outputta den manipulerade bitsträngen?
+000064 b94b      	out PORTD, rPORTD
+000065 b925      	out PORTB, rPORTB
                  
-000054 9a40      	sbi PORTC, PC0
-                 
-000055 cfe8      	rjmp	loop
 
 
 RESOURCE USE INFORMATION
@@ -1122,12 +1154,12 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   2 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   4 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   9 r17:   9 r18:   7 r19:   0 r20:   3 
-r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   1 
+r13:   0 r14:   0 r15:   0 r16:  10 r17:   9 r18:   7 r19:   0 r20:   3 
+r21:   1 r22:   2 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   1 
 r29:   1 r30:   0 r31:   0 
-Registers used: 7 out of 35 (20.0%)
+Registers used: 9 out of 35 (25.7%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
@@ -1135,26 +1167,26 @@ andi  :   0 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :   2 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :  11 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   1 
-ld    :   1 ldd   :   0 ldi   :   5 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   1 ldd   :   0 ldi   :   7 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   2 or    :   0 ori   :   0 out   :   7 pop   :   0 
-push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   1 rol   :   0 
+push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   1 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   1 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   1 std   :   0 sts   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   3 std   :   0 sts   :   0 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 11 out of 113 (9.7%)
+Instructions used: 13 out of 113 (11.5%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0000ae     76      0     76   32768   0.2%
+[.cseg] 0x000000 0x0000ce    108      0    108   32768   0.3%
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
