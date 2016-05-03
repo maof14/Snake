@@ -16,6 +16,7 @@
 .DEF rPORTD        = r20
 .DEF rNoll		   = r22
 .DEF rmp		   = r24
+.DEF RenderctrlA   = r25
 // …
 // */
 // [En lista med konstanter]
@@ -90,15 +91,17 @@ main:
 	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
 	sts TCCR0B, rTemp	; --|--
 	sei
-loop:
+Render:
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
-
+	
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
+	ldi r16, 0xff
+	/*
 
 	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
-	/*sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
+	sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
 	rcall Laddarad		; Kör subrutin
 	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
 	rcall Laddarad		; Kör subrutin
@@ -109,7 +112,7 @@ loop:
 	rcall Laddarad		; Kör subrutin
 	st Y, r22			; 00000000
 	rcall Laddarad		; 
-	cbi PORTC, PC1*/	; Avaktivera
+	cbi PORTC, PC1	; Avaktivera
 
 	st Y, r16			; 
 	sbi PORTD, PD2		; 
@@ -117,8 +120,56 @@ loop:
 	cbi PORTD, PD2		; 
 	st Y, r22			; 
 	rcall Laddarad		; 
+	*/
+	/*ldi rTemp, 0x07
+	cp RenderctrlA, rTemp
+	breq equal
+*/	
+	sbi PORTC, PC0		; aktiverar raden
+	st Y, r16			; laddar r16 till Y(ska ändras till att läsa från matrix)
+	rcall Laddarad		; kör subrutinen Laddarad
+	cbi PORTC, PC0		; avaktiverar raden
 
-	rjmp	loop
+	sbi PORTC, PC1
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC1
+	
+	sbi PORTC, PC2
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC2
+	
+	sbi PORTC, PC3
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC3
+	
+	sbi PORTD, PD2
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD2
+	
+	sbi PORTD, PD3
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD3
+	
+	sbi PORTD, PD4
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD4
+	
+	sbi PORTD, PD5
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD5
+
+
+
+	;equal: ret
+
+	rjmp	Render
 	nop
 
 	; Subrutin för att tända specade lampor

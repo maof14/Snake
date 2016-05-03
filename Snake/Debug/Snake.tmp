@@ -22,11 +22,11 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>33</LINE></matrix>
-  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>34</LINE></snake>
-  <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>49</LINE></init>
-  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>86</LINE></main>
-  <loop><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>93</LINE></loop>
-  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>125</LINE></Laddarad>
+  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>34</LINE></matrix>
+  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>35</LINE></snake>
+  <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>50</LINE></init>
+  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>87</LINE></main>
+  <Render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>94</LINE></Render>
+  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>176</LINE></Laddarad>
  </LABELS>
 </ASSEMBLER_INFO>
