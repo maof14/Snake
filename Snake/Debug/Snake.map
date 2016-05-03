@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 12:03:02 2016
+=======
+AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 11:44:07 2016
+>>>>>>> refs/remotes/origin/master
 
 
 EQU  SIGNATURE_000 0000001e
@@ -703,6 +707,7 @@ DEF  rPORTC       r19
 DEF  rPORTD       r20
 DEF  rNoll        r22
 DEF  rmp          r24
+DEF  RenderctrlA  r25
 EQU  NUM_COLUMNS  00000008
 EQU  NUM_ROWS     00000008
 EQU  MAX_LENGTH   00000019
@@ -758,5 +763,10 @@ DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
 CSEG main         00000043
+<<<<<<< HEAD
 CSEG loop         0000004a
 CSEG Laddarad     00000055
+=======
+CSEG Render       0000004a
+CSEG Laddarad     0000006f
+>>>>>>> refs/remotes/origin/master

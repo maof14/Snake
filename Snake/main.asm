@@ -16,6 +16,7 @@
 .DEF rPORTD        = r20
 .DEF rNoll		   = r22
 .DEF rmp		   = r24
+.DEF RenderctrlA   = r25
 // …
 // */
 // [En lista med konstanter]
@@ -25,72 +26,74 @@
 .EQU NUM_ROWS	   = 8 // Mattias
 .EQU MAX_LENGTH    = 25
 
-; Mattias nu igen
-.EQU COL0_DDR = DDRC
-.EQU COL0_PORT = PORTC
-.EQU COL0_PINOUT = PC0
+; Mattias i farten nu igen
+; Definera namn för alla kolumner för att dessa ska bli enkelt att referera till
+.EQU COL0_DDR = DDRD
+.EQU COL0_PORT = PORTD
+.EQU COL0_PINOUT = PD6
 
-.EQU COL1_DDR = DDRC
-.EQU COL1_PORT = PORTC
-.EQU COL1_PINOUT = PC1
+.EQU COL1_DDR = DDRD
+.EQU COL1_PORT = PORTD
+.EQU COL1_PINOUT = PD7
 
-.EQU COL2_DDR = DDRC
-.EQU COL2_PORT = PORTC
-.EQU COL2_PINOUT = PC2
+.EQU COL2_DDR = DDRB
+.EQU COL2_PORT = PORTB
+.EQU COL2_PINOUT = PB0
 
-.EQU COL3_DDR = DDRC
-.EQU COL3_PORT = PORTC
-.EQU COL3_PINOUT = PC3
+.EQU COL3_DDR = DDRB
+.EQU COL3_PORT = PORTB
+.EQU COL3_PINOUT = PB1
 
-.EQU COL4_DDR = DDRC
-.EQU COL4_PORT = PORTC
-.EQU COL4_PINOUT = PC4
+.EQU COL4_DDR = DDRB
+.EQU COL4_PORT = PORTB
+.EQU COL4_PINOUT = PB2
 
-.EQU COL5_DDR = DDRD
-.EQU COL5_PORT = PORTD
-.EQU COL5_PINOUT = PC5
+.EQU COL5_DDR = DDRB
+.EQU COL5_PORT = PORTB
+.EQU COL5_PINOUT = PB3
 
-.EQU COL6_DDR = DDRD
-.EQU COL6_PORT = PORTD
-.EQU COL6_PINOUT = PB1
+.EQU COL6_DDR = DDRB
+.EQU COL6_PORT = PORTB
+.EQU COL6_PINOUT = PB4
 
-.EQU COL7_DDR = DDRD
-.EQU COL7_PORT = PORTD
-.EQU COL7_PINOUT = PB2
+.EQU COL7_DDR = DDRB
+.EQU COL7_PORT = PORTB
+.EQU COL7_PINOUT = PB5
 
 // COL
 
-.EQU ROW0_DDR = DDRD
-.EQU ROW0_PORT =  PORTD
-.EQU ROW0_PINOUT = PD0
+; Definera namn för alla rader. 
+.EQU ROW0_DDR = DDRC
+.EQU ROW0_PORT =  PORTC
+.EQU ROW0_PINOUT = PC0
 
-.EQU ROW1_DDR = DDRD
-.EQU ROW1_PORT = PORTD
-.EQU ROW1_PINOUT = PD2
+.EQU ROW1_DDR = DDRC
+.EQU ROW1_PORT = PORTC
+.EQU ROW1_PINOUT = PC1
 
-.EQU ROW2_DDR = DDRD
-.EQU ROW2_PORT = PORTD
-.EQU ROW2_PINOUT = PD3
+.EQU ROW2_DDR = DDRC
+.EQU ROW2_PORT = PORTC
+.EQU ROW2_PINOUT = PC2
 
-.EQU ROW3_DDR = DDRD
-.EQU ROW3_PORT = PORTD
-.EQU ROW3_PINOUT = PD4
+.EQU ROW3_DDR = DDRC
+.EQU ROW3_PORT = PORTC
+.EQU ROW3_PINOUT = PC3
 
 .EQU ROW4_DDR = DDRD
 .EQU ROW4_PORT = PORTD
-.EQU ROW4_PINOUT = PD5
+.EQU ROW4_PINOUT = PD2
 
 .EQU ROW5_DDR = DDRD
 .EQU ROW5_PORT = PORTD
-.EQU ROW5_PINOUT = PD6
+.EQU ROW5_PINOUT = PD3
 
 .EQU ROW6_DDR = DDRD
 .EQU ROW6_PORT = PORTD
-.EQU ROW6_PINOUT = PD7
+.EQU ROW6_PINOUT = PD4
 
-.EQU ROW7_DDR = DDRB
-.EQU ROW7_PORT = PORTB
-.EQU ROW7_PINOUT = PB0
+.EQU ROW7_DDR = DDRD
+.EQU ROW7_PORT = PORTD
+.EQU ROW7_PINOUT = PD5
 
 // …
 // */
@@ -157,15 +160,17 @@ main:
 	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
 	sts TCCR0B, rTemp	; --|--
 	sei
-loop:
+Render:
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
-
+	
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
+	ldi r16, 0xff
+	/*
 
 	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
-	/*sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
+	sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
 	rcall Laddarad		; Kör subrutin
 	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
 	rcall Laddarad		; Kör subrutin
@@ -176,7 +181,7 @@ loop:
 	rcall Laddarad		; Kör subrutin
 	st Y, r22			; 00000000
 	rcall Laddarad		; 
-	cbi PORTC, PC1*/	; Avaktivera
+	cbi PORTC, PC1	; Avaktivera
 
 	st Y, r16			; 
 	sbi PORTD, PD2		; 
@@ -185,8 +190,56 @@ loop:
 	cbi PORTD, PD2		; 
 	st Y, r22			; 
 	rcall Laddarad		; 
+	*/
+	/*ldi rTemp, 0x07
+	cp RenderctrlA, rTemp
+	breq equal
+*/	
+	sbi PORTC, PC0		; aktiverar raden
+	st Y, r16			; laddar r16 till Y(ska ändras till att läsa från matrix)
+	rcall Laddarad		; kör subrutinen Laddarad
+	cbi PORTC, PC0		; avaktiverar raden
 
-	rjmp	loop
+	sbi PORTC, PC1
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC1
+	
+	sbi PORTC, PC2
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC2
+	
+	sbi PORTC, PC3
+	st Y, r16
+	rcall Laddarad
+	cbi PORTC, PC3
+	
+	sbi PORTD, PD2
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD2
+	
+	sbi PORTD, PD3
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD3
+	
+	sbi PORTD, PD4
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD4
+	
+	sbi PORTD, PD5
+	st Y, r16
+	rcall Laddarad
+	cbi PORTD, PD5
+
+
+
+	;equal: ret
+
+	rjmp	Render
 	nop
 
 	; Subrutin för att tända specade lampor
