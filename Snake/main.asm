@@ -5,7 +5,6 @@
 ; Author : Mattias
 ;
 
-
 ; Replace with your application code
 // [En lista med registerdefinitioner]
 /* t ex */
@@ -15,10 +14,12 @@
 .DEF rPORTB        = r18
 .DEF rPORTC        = r19
 .DEF rPORTD        = r20
+.DEF rmp		   = r24
 // …
 // */
 // [En lista med konstanter]
 /* t ex */
+//.EQU rmp		   = r24
 .EQU NUM_COLUMNS   = 8
 .EQU NUM_ROWS	   = 8 // Mattias
 .EQU MAX_LENGTH    = 25
@@ -51,6 +52,15 @@ init:
      ldi rTemp, LOW(RAMEND)
      out SPL, rTemp
 // */
+
+/* ATMEGA BEGINNERS sida 62*/ /*
+	ldi rTemp, 1<<TOIE0
+	out TIMSK, rTemp
+	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
+	out TCCR0, rTemp
+
+	*/
+
 	
 	ldi r22, 0x00
 	ldi r21, 0x01
@@ -58,6 +68,10 @@ init:
 	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
 	out DDRC, r16
 	out DDRD, r16
+
+	
+
+	
 
 	; Sätter joystickar till input!
 	cbi DDRC, PC4 ; 
@@ -87,6 +101,13 @@ init:
 	cbi PORTD, PD3
 	cbi PORTD, PD4
 	cbi PORTD, PD5
+
+main:
+	/* ATMEGA BEGINNERS sida 62*/
+	ldi rmp, 1<<TOIE0
+	sts TIMSK0, rmp 
+	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
+	sts TCCR0B, rTemp
 
 loop:
 
