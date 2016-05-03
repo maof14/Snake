@@ -103,11 +103,11 @@ init:
 	cbi PORTD, PD5
 
 main:
-	/* ATMEGA BEGINNERS sida 62*/
+	/* ATMEGA BEGINNERS sida 62 */
 	ldi rmp, 1<<TOIE0
-	sts TIMSK0, rmp 
+	sts TIMSK0, rmp		; out-instruktion fast för icke extendat I/O-space. Eller kanske tvärtom?
 	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
-	sts TCCR0B, rTemp
+	sts TCCR0B, rTemp	; --|--
 
 loop:
 
