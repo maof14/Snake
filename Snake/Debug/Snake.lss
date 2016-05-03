@@ -1,9 +1,5 @@
 
-<<<<<<< HEAD
-AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 12:03:02 2016
-=======
-AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 11:44:07 2016
->>>>>>> refs/remotes/origin/master
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 12:42:57 2016
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
                  
@@ -1015,72 +1011,74 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
                  .EQU NUM_ROWS	   = 8 // Mattias
                  .EQU MAX_LENGTH    = 25
                  
-                 ; Mattias nu igen
-                 .EQU COL0_DDR = DDRC
-                 .EQU COL0_PORT = PORTC
-                 .EQU COL0_PINOUT = PC0
+                 ; Mattias i farten nu igen
+                 ; Definera namn för alla kolumner för att dessa ska bli enkelt att referera till
+                 .EQU COL0_DDR = DDRD
+                 .EQU COL0_PORT = PORTD
+                 .EQU COL0_PINOUT = PD6
                  
-                 .EQU COL1_DDR = DDRC
-                 .EQU COL1_PORT = PORTC
-                 .EQU COL1_PINOUT = PC1
+                 .EQU COL1_DDR = DDRD
+                 .EQU COL1_PORT = PORTD
+                 .EQU COL1_PINOUT = PD7
                  
-                 .EQU COL2_DDR = DDRC
-                 .EQU COL2_PORT = PORTC
-                 .EQU COL2_PINOUT = PC2
+                 .EQU COL2_DDR = DDRB
+                 .EQU COL2_PORT = PORTB
+                 .EQU COL2_PINOUT = PB0
                  
-                 .EQU COL3_DDR = DDRC
-                 .EQU COL3_PORT = PORTC
-                 .EQU COL3_PINOUT = PC3
+                 .EQU COL3_DDR = DDRB
+                 .EQU COL3_PORT = PORTB
+                 .EQU COL3_PINOUT = PB1
                  
-                 .EQU COL4_DDR = DDRC
-                 .EQU COL4_PORT = PORTC
-                 .EQU COL4_PINOUT = PC4
+                 .EQU COL4_DDR = DDRB
+                 .EQU COL4_PORT = PORTB
+                 .EQU COL4_PINOUT = PB2
                  
-                 .EQU COL5_DDR = DDRD
-                 .EQU COL5_PORT = PORTD
-                 .EQU COL5_PINOUT = PC5
+                 .EQU COL5_DDR = DDRB
+                 .EQU COL5_PORT = PORTB
+                 .EQU COL5_PINOUT = PB3
                  
-                 .EQU COL6_DDR = DDRD
-                 .EQU COL6_PORT = PORTD
-                 .EQU COL6_PINOUT = PB1
+                 .EQU COL6_DDR = DDRB
+                 .EQU COL6_PORT = PORTB
+                 .EQU COL6_PINOUT = PB4
                  
-                 .EQU COL7_DDR = DDRD
-                 .EQU COL7_PORT = PORTD
-                 .EQU COL7_PINOUT = PB2
+                 .EQU COL7_DDR = DDRB
+                 .EQU COL7_PORT = PORTB
+                 .EQU COL7_PINOUT = PB5
                  
                  // COL
                  
-                 .EQU ROW0_DDR = DDRD
-                 .EQU ROW0_PORT =  PORTD
-                 .EQU ROW0_PINOUT = PD0
+                 ; Definera namn för alla rader. 
+                 .EQU ROW0_DDR = DDRC
+                 .EQU ROW0_PORT =  PORTC
+                 .EQU ROW0_PINOUT = PC0
                  
-                 .EQU ROW1_DDR = DDRD
-                 .EQU ROW1_PORT = PORTD
-                 .EQU ROW1_PINOUT = PD2
+                 .EQU ROW1_DDR = DDRC
+                 .EQU ROW1_PORT = PORTC
+                 .EQU ROW1_PINOUT = PC1
                  
-                 .EQU ROW2_DDR = DDRD
-                 .EQU ROW2_PORT = PORTD
-                 .EQU ROW2_PINOUT = PD3
+                 .EQU ROW2_DDR = DDRC
+                 .EQU ROW2_PORT = PORTC
+                 .EQU ROW2_PINOUT = PC2
                  
-                 .EQU ROW3_DDR = DDRD
-                 .EQU ROW3_PORT = PORTD
-                 .EQU ROW3_PINOUT = PD4
+                 .EQU ROW3_DDR = DDRC
+                 .EQU ROW3_PORT = PORTC
+                 .EQU ROW3_PINOUT = PC3
                  
                  .EQU ROW4_DDR = DDRD
                  .EQU ROW4_PORT = PORTD
-                 .EQU ROW4_PINOUT = PD5
+                 .EQU ROW4_PINOUT = PD2
                  
                  .EQU ROW5_DDR = DDRD
                  .EQU ROW5_PORT = PORTD
-                 .EQU ROW5_PINOUT = PD6
+                 .EQU ROW5_PINOUT = PD3
                  
                  .EQU ROW6_DDR = DDRD
                  .EQU ROW6_PORT = PORTD
-                 .EQU ROW6_PINOUT = PD7
+                 .EQU ROW6_PINOUT = PD4
                  
-                 .EQU ROW7_DDR = DDRB
-                 .EQU ROW7_PORT = PORTB
-                 .EQU ROW7_PINOUT = PB0
+                 .EQU ROW7_DDR = DDRD
+                 .EQU ROW7_PORT = PORTD
+                 .EQU ROW7_PINOUT = PD5
                  
                  // …
                  // */
@@ -1147,29 +1145,17 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
 000046 e005      	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
 000047 9300 0025 	sts TCCR0B, rTemp	; --|--
 000049 9478      	sei
-<<<<<<< HEAD
-                 loop:
-=======
                  Render:
->>>>>>> refs/remotes/origin/master
                  
                  	; Få översta raden att lysa genom bitmanipulering, bst / bld
                  	
 00004a e0d1      	ldi YH, HIGH(matrix)
 00004b e0c0      	ldi YL, LOW(matrix)
-00004c ef0f      	ldi r16, 0xff
+00004c e60e      	ldi r16, 0x6e
                  	/*
                  
-<<<<<<< HEAD
-00004a e0d1      	ldi YH, HIGH(matrix)
-00004b e0c0      	ldi YL, LOW(matrix)
-                 
-00004c 8308      	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
-                 	/*sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
-=======
                  	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
                  	sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
->>>>>>> refs/remotes/origin/master
                  	rcall Laddarad		; Kör subrutin
                  	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
                  	rcall Laddarad		; Kör subrutin
@@ -1185,6 +1171,7 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
                  	st Y, r16			; 
                  	sbi PORTD, PD2		; 
                  	rcall Laddarad		; 
+                 
                  	cbi PORTD, PD2		; 
                  	st Y, r22			; 
                  	rcall Laddarad		; 
@@ -1193,134 +1180,87 @@ AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main
                  	cp RenderctrlA, rTemp
                  	breq equal
                  */	
-00004d 9a40      	sbi PORTC, PC0
-00004e 8308      	st Y, r16
-00004f d01f      	rcall Laddarad
-000050 9840      	cbi PORTC, PC0
+00004d 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+00004e 8308      	st y, r16					; Sätt vilka lampor ska lysa
+00004f d007      	rcall Laddarad				; Ladda raden
+000050 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Rensa raden
                  
-000051 9a41      	sbi PORTC, PC1
-000052 8308      	st Y, r16
-000053 d01b      	rcall Laddarad
-000054 9841      	cbi PORTC, PC1
+000051 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
+000052 8308      	st y, r16
+000053 d003      	rcall Laddarad
+000054 985c      	cbi ROW6_PORT, ROW6_PINOUT
                  	
-000055 9a42      	sbi PORTC, PC2
-000056 8308      	st Y, r16
-000057 d017      	rcall Laddarad
-000058 9842      	cbi PORTC, PC2
+                 	/*sbi PORTC, PC2
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTC, PC2
                  	
-000059 9a43      	sbi PORTC, PC3
-00005a 8308      	st Y, r16
-00005b d013      	rcall Laddarad
-00005c 9843      	cbi PORTC, PC3
+                 	sbi PORTC, PC3
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTC, PC3
                  	
-00005d 9a5a      	sbi PORTD, PD2
-00005e 8308      	st Y, r16
-00005f d00f      	rcall Laddarad
-000060 985a      	cbi PORTD, PD2
+                 	sbi PORTD, PD2
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTD, PD2
                  	
-000061 9a5b      	sbi PORTD, PD3
-000062 8308      	st Y, r16
-000063 d00b      	rcall Laddarad
-000064 985b      	cbi PORTD, PD3
+                 	sbi PORTD, PD3
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTD, PD3
                  	
-000065 9a5c      	sbi PORTD, PD4
-000066 8308      	st Y, r16
-000067 d007      	rcall Laddarad
-000068 985c      	cbi PORTD, PD4
+                 	sbi PORTD, PD4
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTD, PD4
                  	
-000069 9a5d      	sbi PORTD, PD5
-00006a 8308      	st Y, r16
-00006b d003      	rcall Laddarad
-00006c 985d      	cbi PORTD, PD5
+                 	sbi PORTD, PD5
+                 	st Y, r16
+                 	rcall Laddarad
+                 	cbi PORTD, PD5 */
                  
                  
                  
-<<<<<<< HEAD
-00004d 8308      	st Y, r16			; 
-00004e 9a5a      	sbi PORTD, PD2		; 
-00004f d005      	rcall Laddarad		; 
-                 
-000050 985a      	cbi PORTD, PD2		; 
-000051 8368      	st Y, r22			; 
-000052 d002      	rcall Laddarad		; 
-                 
-000053 cff6      	rjmp	loop
-000054 0000      	nop
-                 
-                 	; Subrutin för att tända specade lampor
-                 Laddarad:
-000055 8118      	ld rMellan, Y ; rMellan = Y
-=======
                  	;equal: ret
                  
-00006d cfdc      	rjmp	Render
-00006e 0000      	nop
+000055 cff4      	rjmp	Render
+000056 0000      	nop
                  
                  	; Subrutin för att tända specade lampor
                  Laddarad:
-00006f 8118      	ld rMellan, Y ; rMellan = Y
->>>>>>> refs/remotes/origin/master
+000057 8118      	ld rMellan, Y ; rMellan = Y
                  
                  	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
                  	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
                  
-<<<<<<< HEAD
-000056 fb17      	bst rMellan, 7 ; MSB
-000057 f946      	bld rPORTD, 6
+000058 fb17      	bst rMellan, 7 ; MSB
+000059 f946      	bld rPORTD, 6
                  
-000058 fb16      	bst rMellan, 6
-000059 f947      	bld rPORTD, 7
+00005a fb16      	bst rMellan, 6
+00005b f947      	bld rPORTD, 7
                  	
-00005a fb15      	bst rMellan, 5
-00005b f920      	bld rPORTB, 0
+00005c fb15      	bst rMellan, 5
+00005d f920      	bld rPORTB, 0
                  	
-00005c fb14      	bst rMellan, 4
-00005d f921      	bld rPORTB, 1
+00005e fb14      	bst rMellan, 4
+00005f f921      	bld rPORTB, 1
                  	
-00005e fb13      	bst rMellan, 3
-00005f f922      	bld rPORTB, 2
+000060 fb13      	bst rMellan, 3
+000061 f922      	bld rPORTB, 2
                  	
-000060 fb12      	bst rMellan, 2
-000061 f923      	bld rPORTB, 3
+000062 fb12      	bst rMellan, 2
+000063 f923      	bld rPORTB, 3
                  	
-000062 fb11      	bst rMellan, 1
-000063 f924      	bld rPORTB, 4
+000064 fb11      	bst rMellan, 1
+000065 f924      	bld rPORTB, 4
                  	
-000064 fb10      	bst rMellan, 0 ; LSB
-000065 f925      	bld rPORTB, 5
-                 
-                 	; Outputta den manipulerade bitsträngen?
-000066 b94b      	out PORTD, rPORTD
-000067 b925      	out PORTB, rPORTB
-=======
-000070 fb17      	bst rMellan, 7 ; MSB
-000071 f946      	bld rPORTD, 6
-                 
-000072 fb16      	bst rMellan, 6
-000073 f947      	bld rPORTD, 7
-                 	
-000074 fb15      	bst rMellan, 5
-000075 f920      	bld rPORTB, 0
-                 	
-000076 fb14      	bst rMellan, 4
-000077 f921      	bld rPORTB, 1
-                 	
-000078 fb13      	bst rMellan, 3
-000079 f922      	bld rPORTB, 2
-                 	
-00007a fb12      	bst rMellan, 2
-00007b f923      	bld rPORTB, 3
-                 	
-00007c fb11      	bst rMellan, 1
-00007d f924      	bld rPORTB, 4
-                 	
-00007e fb10      	bst rMellan, 0 ; LSB
-00007f f925      	bld rPORTB, 5
+000066 fb10      	bst rMellan, 0 ; LSB
+000067 f925      	bld rPORTB, 5
                  
                  	; Outputta den manipulerade bitsträngen?
-000080 b94b      	out PORTD, rPORTD
-000081 b925      	out PORTB, rPORTB
->>>>>>> refs/remotes/origin/master
+000068 b94b      	out PORTD, rPORTD
+000069 b925      	out PORTB, rPORTB
                  
 
 
@@ -1339,9 +1279,9 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   9 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   3 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  19 r17:   9 r18:   7 r19:   0 r20:   3 
+r13:   0 r14:   0 r15:   0 r16:  13 r17:   9 r18:   7 r19:   0 r20:   3 
 r21:   1 r22:   4 r23:   0 r24:   2 r25:   0 r26:   0 r27:   0 r28:   1 
 r29:   1 r30:   0 r31:   0 
 Registers used: 10 out of 35 (28.6%)
@@ -1352,7 +1292,7 @@ andi  :   0 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :  10 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :   4 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
@@ -1360,26 +1300,18 @@ fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   1
 ld    :   1 ldd   :   0 ldi   :  10 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   2 or    :   0 ori   :   0 out   :  10 pop   :   0 
-push  :   0 rcall :   8 ret   :   1 reti  :   0 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   8 sbic  :   0 sbis  :   0 
+push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   1 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-<<<<<<< HEAD
-sez   :   0 sleep :   0 spm   :   0 st    :   3 std   :   0 sts   :   2 
-=======
-sez   :   0 sleep :   0 spm   :   0 st    :   8 std   :   0 sts   :   2 
->>>>>>> refs/remotes/origin/master
+sez   :   0 sleep :   0 spm   :   0 st    :   2 std   :   0 sts   :   2 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 15 out of 113 (13.3%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-<<<<<<< HEAD
-[.cseg] 0x000000 0x0000d2    112      0    112   32768   0.3%
-=======
-[.cseg] 0x000000 0x000106    164      0    164   32768   0.5%
->>>>>>> refs/remotes/origin/master
+[.cseg] 0x000000 0x0000d6    116      0    116   32768   0.4%
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

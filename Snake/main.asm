@@ -166,7 +166,7 @@ Render:
 	
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
-	ldi r16, 0xff
+	ldi r16, 0x6e
 	/*
 
 	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
@@ -195,17 +195,17 @@ Render:
 	cp RenderctrlA, rTemp
 	breq equal
 */	
-	sbi PORTC, PC0		; aktiverar raden
-	st Y, r16			; laddar r16 till Y(ska ändras till att läsa från matrix)
-	rcall Laddarad		; kör subrutinen Laddarad
-	cbi PORTC, PC0		; avaktiverar raden
+	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+	st y, r16					; Sätt vilka lampor ska lysa
+	rcall Laddarad				; Ladda raden
+	cbi ROW0_PORT, ROW0_PINOUT	; Rensa raden
 
-	sbi PORTC, PC1
-	st Y, r16
+	sbi ROW6_PORT, ROW6_PINOUT
+	st y, r16
 	rcall Laddarad
-	cbi PORTC, PC1
+	cbi ROW6_PORT, ROW6_PINOUT
 	
-	sbi PORTC, PC2
+	/*sbi PORTC, PC2
 	st Y, r16
 	rcall Laddarad
 	cbi PORTC, PC2
@@ -233,7 +233,7 @@ Render:
 	sbi PORTD, PD5
 	st Y, r16
 	rcall Laddarad
-	cbi PORTD, PD5
+	cbi PORTD, PD5 */
 
 
 
