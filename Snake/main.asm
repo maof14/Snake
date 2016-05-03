@@ -89,7 +89,7 @@ main:
 	sts TIMSK0, rmp		; out-instruktion fast för icke extendat I/O-space. Eller kanske tvärtom?
 	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
 	sts TCCR0B, rTemp	; --|--
-
+	sei
 loop:
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
