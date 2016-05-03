@@ -14,6 +14,7 @@
 .DEF rPORTB        = r18
 .DEF rPORTC        = r19
 .DEF rPORTD        = r20
+.DEF rNoll		   = r22
 .DEF rmp		   = r24
 // …
 // */
@@ -62,7 +63,7 @@ init:
 	*/
 
 	
-	ldi r22, 0x00
+	ldi rNoll, 0x00
 	ldi r21, 0x01
 	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
 	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
@@ -77,30 +78,10 @@ init:
 	cbi DDRC, PC4 ; 
 	cbi DDRC, PC5 //DDR klar
 
-/* loop:
-	// ldi r16, 0x0006
-	out PORTB, r16
-	//out PORTC, r16
-	//out PORTD, r16
-	// ldi r16, 0x0001
 
-	sbi PORTC, PC0
-	//sbi PORTD, PD6
-	sbi PORTD, PD6
-	sbi PORTD, PD7
-
-	
-	rjmp    loop
-	nop */
-
-	cbi PORTC, PC0
-	cbi PORTC, PC1
-	cbi PORTC, PC2
-	cbi PORTC, PC3
-	cbi PORTD, PD2
-	cbi PORTD, PD3
-	cbi PORTD, PD4
-	cbi PORTD, PD5
+	out PORTB, rNoll
+	out PORTC, rNoll
+	out PORTD, rNoll
 
 main:
 	/* ATMEGA BEGINNERS sida 62*/
