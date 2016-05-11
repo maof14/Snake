@@ -201,14 +201,6 @@ main:
 	ldi rTemp, 0b01010101
 	st X+, rTemp
 
-
-	rcall render
-
-	rjmp	main
-
-render:
-/*	ldi rTemp, 0xff */
-
 	// Välj källa (Y-axel)
 	ldi rTemp, 0x00
 	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
