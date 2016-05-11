@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.0</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\Debug\Snake.obj</FILE>
+  <FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\Debug\Snake.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Snake.hex</FILE>
@@ -22,28 +22,13 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-<<<<<<< HEAD
-  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>103</LINE></matrix>
-  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>104</LINE></snake>
-  <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></init>
-  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>164</LINE></main>
-  <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>200</LINE></render>
-  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>260</LINE></Laddarad>
-=======
   <matrix><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>103</LINE></matrix>
   <snake><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>104</LINE></snake>
   <init><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></init>
-  <isr_timerOF><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>296</LINE></isr_timerOF>
-  <main><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>168</LINE></main>
-<<<<<<< HEAD
-  <iterate><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>183</LINE></iterate>
-  <render><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>203</LINE></render>
-  <Laddarad><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>260</LINE></Laddarad>
->>>>>>> refs/remotes/origin/master
-=======
-  <iterate><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>184</LINE></iterate>
-  <render><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>205</LINE></render>
-  <Laddarad><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>262</LINE></Laddarad>
->>>>>>> refs/remotes/origin/master
+  <main><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>174</LINE></main>
+  <iterate><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>214</LINE></iterate>
+  <render><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>235</LINE></render>
+  <Laddarad><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>292</LINE></Laddarad>
+  <isr_timerOF><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>326</LINE></isr_timerOF>
  </LABELS>
 </ASSEMBLER_INFO>
