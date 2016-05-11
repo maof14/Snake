@@ -110,10 +110,10 @@ snake:    .BYTE MAX_LENGTH+1
 // Interrupt vector table
 .ORG 0x0000
      jmp init // Reset vector
-	 nop
+	 nop /*
 .ORG 0x0020
 	 jmp isr_timerOF ; Interrupt subroutine
-	 nop
+	 nop */
 // ... fler interrupts
 .ORG INT_VECTORS_SIZE
 init: ; Initiering av värden, och vad som ska hända med timern. 
@@ -123,10 +123,11 @@ init: ; Initiering av värden, och vad som ska hända med timern.
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 	// Stackpekare slut
-
+/*
 	; Konfigurera high resp. low för Y-registret. 
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
+*/
 
 	; Initiera lite värden
 	ldi rNoll, 0b00000000
@@ -139,9 +140,9 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 
 	; Sätter joystickar till input!
 	cbi DDRC, PC4 ; 
-	cbi DDRC, PC5 //DDR klar
+	cbi DDRC, PC5 ;DDR klar
 
-	; Sätter LED-portar till output. 
+	; Avaktiverar alla lampor 
 	out PORTB, rNoll
 	out PORTC, rNoll
 	out PORTD, rNoll
@@ -164,17 +165,96 @@ main:
 	
 	; Vad ska den göra här egentligen?
 
+	ldi XH, HIGH(matrix)
+	ldi XL, LOW(matrix)
+
+	ldi rTemp, 0b10101010
+	st X+, rTemp
+
+	ldi rTemp, 0b01010101
+	st X+, rTemp
+
+	ldi rTemp, 0b10101010
+	st X+, rTemp
+
+	ldi rTemp, 0b01010101
+	st X+, rTemp
+
+	ldi rTemp, 0b10101010
+	st X+, rTemp
+
+	ldi rTemp, 0b01010101
+	st X+, rTemp
+
+	ldi rTemp, 0b10101010
+	st X+, rTemp
+
+	ldi rTemp, 0b01010101
+	st X+, rTemp
+
+
+	rcall render
+
+	rjmp	main
+
 render:
-	ldi rTemp, 0xff
+/*	ldi rTemp, 0xff */
+
+
+
+	ldi XH, HIGH(matrix)
+	ldi XL, LOW(matrix)
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
 	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+	ld rTemp, X+
 	st Y, rTemp					; Sätt vilka lampor ska lysa ()
 	rcall Laddarad				; Ladda raden genom subrutin
 	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
 
-	rjmp	render
-	nop
+	sbi ROW1_PORT, ROW1_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW1_PORT, ROW1_PINOUT
+
+	sbi ROW2_PORT, ROW2_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW2_PORT, ROW2_PINOUT
+
+	sbi ROW3_PORT, ROW3_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW3_PORT, ROW3_PINOUT
+
+	sbi ROW4_PORT, ROW4_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW4_PORT, ROW4_PINOUT
+
+	sbi ROW5_PORT, ROW5_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW5_PORT, ROW5_PINOUT
+	
+	sbi ROW6_PORT, ROW6_PINOUT
+	ld rTemp, X+	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW6_PORT, ROW6_PINOUT
+
+	sbi ROW7_PORT, ROW7_PINOUT
+	ld rTemp, X	
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW7_PORT, ROW7_PINOUT 
+
+	ret
 
 ; Subrutin för att tända specade lampor
 Laddarad:
@@ -210,7 +290,7 @@ Laddarad:
 	out PORTB, rPORTB
 
 	ret
-
+/*
 isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0. 
 
 	ldi rTemp, 0b11001011
@@ -221,3 +301,5 @@ isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0.
 	cbi ROW1_PORT, ROW1_PINOUT
 
 	reti ; (Return from interrupt)
+
+	*/
