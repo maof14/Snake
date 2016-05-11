@@ -1,8 +1,12 @@
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 10:21:12 2016
 =======
 AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 11:06:36 2016
+>>>>>>> refs/remotes/origin/master
+=======
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 11:13:08 2016
 >>>>>>> refs/remotes/origin/master
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
@@ -1102,10 +1106,14 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
 000002 0000      	 nop /*
                  .ORG 0x0020
 <<<<<<< HEAD
+<<<<<<< HEAD
                  	 jmp isr_timerOF ; Interrupt subroutine
                  	 nop */
 =======
 000020 940c 00a8 	 jmp isr_timerOF ; Interrupt subroutine
+=======
+000020 940c 00aa 	 jmp isr_timerOF ; Interrupt subroutine
+>>>>>>> refs/remotes/origin/master
 000022 0000      	 nop
 >>>>>>> refs/remotes/origin/master
                  // ... fler interrupts
@@ -1298,94 +1306,101 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
 000055 e0a0      	ldi XL, LOW(matrix)
                  
                  	// Välj källa (Y-axel)
-000056 e004      	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
-000057 9300 007c 	sts ADMUX, rTemp
+000056 e000      	ldi rTemp, 0x00
+000057 e004      	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
+000058 9300 007c 	sts ADMUX, rTemp
                  	// Välj källa slut
                  
-000059 e000      	ldi rTemp, 0x00 ; Reset rTemp
-00005a e400      	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
-00005b 9300 007a 	sts ADCSRA, rTemp	; Ladda in
+00005a e000      	ldi rTemp, 0x00		; Reset rTemp
+00005b e400      	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
+00005c 9300 007a 	sts ADCSRA, rTemp	; Ladda in
                  	
                  iterate:
-00005d 9100 007a 	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
-00005f fd06      	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
-000060 940c 005d 	jmp iterate			; Iterera
-000062 0000      	nop
+00005e e000      	ldi rTemp, 0x00
+00005f 9100 007a 	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
+000061 fd06      	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
+000062 940c 005e 	jmp iterate			; Iterera
+000064 0000      	nop
                  
                  	; om biten är skippad kommer vi hit... 
                  
                  	; Läsa bit från den utökade I/O-rymden...
-000063 e000      	ldi rTemp, 0x00		; Nollställ rTemp
-000064 9100 0078 	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+000065 e000      	ldi rTemp, 0x00		; Nollställ rTemp
+000066 9100 0078 	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
                  	; Endast ADCL behöver läsas då dessa är de lägre 8 bitarna. 
                  
                  	// Testa att skicka ut datat. 
-000066 930c      	st X, rTemp ; X+ ?
+000068 930d      	st X+, rTemp ; ?
                  
-000067 d001      	rcall render
+000069 d001      	rcall render
                  
-000068 cfeb      	rjmp main
+00006a cfe9      	rjmp main
                  
                  render:
                  
-000069 e0b1      	ldi XH, HIGH(matrix)
-00006a e0a0      	ldi XL, LOW(matrix)
+00006b e0b1      	ldi XH, HIGH(matrix)
+00006c e0a0      	ldi XL, LOW(matrix)
                  
                  	; Få översta raden att lysa genom bitmanipulering, bst / bld
-00006b 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-00006c 910d      	ld rTemp, X+
-00006d 8308      	st Y, rTemp					; Sätt vilka lampor ska lysa ()
-00006e d025      	rcall Laddarad				; Ladda raden genom subrutin
-00006f 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
+00006d 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+00006e 910d      	ld rTemp, X+
+00006f 8308      	st Y, rTemp					; Sätt vilka lampor ska lysa ()
+000070 d025      	rcall Laddarad				; Ladda raden genom subrutin
+000071 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
                  
-000070 9a41      	sbi ROW1_PORT, ROW1_PINOUT
-000071 910d      	ld rTemp, X+	
-000072 8308      	st Y, rTemp					
-000073 d020      	rcall Laddarad				
-000074 9841      	cbi ROW1_PORT, ROW1_PINOUT
+000072 9a41      	sbi ROW1_PORT, ROW1_PINOUT
+000073 910d      	ld rTemp, X+	
+000074 8308      	st Y, rTemp					
+000075 d020      	rcall Laddarad				
+000076 9841      	cbi ROW1_PORT, ROW1_PINOUT
                  
-000075 9a42      	sbi ROW2_PORT, ROW2_PINOUT
-000076 910d      	ld rTemp, X+	
-000077 8308      	st Y, rTemp					
-000078 d01b      	rcall Laddarad				
-000079 9842      	cbi ROW2_PORT, ROW2_PINOUT
+000077 9a42      	sbi ROW2_PORT, ROW2_PINOUT
+000078 910d      	ld rTemp, X+	
+000079 8308      	st Y, rTemp					
+00007a d01b      	rcall Laddarad				
+00007b 9842      	cbi ROW2_PORT, ROW2_PINOUT
                  
-00007a 9a43      	sbi ROW3_PORT, ROW3_PINOUT
-00007b 910d      	ld rTemp, X+	
-00007c 8308      	st Y, rTemp					
-00007d d016      	rcall Laddarad				
-00007e 9843      	cbi ROW3_PORT, ROW3_PINOUT
+00007c 9a43      	sbi ROW3_PORT, ROW3_PINOUT
+00007d 910d      	ld rTemp, X+	
+00007e 8308      	st Y, rTemp					
+00007f d016      	rcall Laddarad				
+000080 9843      	cbi ROW3_PORT, ROW3_PINOUT
                  
-00007f 9a5a      	sbi ROW4_PORT, ROW4_PINOUT
-000080 910d      	ld rTemp, X+	
-000081 8308      	st Y, rTemp					
-000082 d011      	rcall Laddarad				
-000083 985a      	cbi ROW4_PORT, ROW4_PINOUT
+000081 9a5a      	sbi ROW4_PORT, ROW4_PINOUT
+000082 910d      	ld rTemp, X+	
+000083 8308      	st Y, rTemp					
+000084 d011      	rcall Laddarad				
+000085 985a      	cbi ROW4_PORT, ROW4_PINOUT
                  
-000084 9a5b      	sbi ROW5_PORT, ROW5_PINOUT
-000085 910d      	ld rTemp, X+	
-000086 8308      	st Y, rTemp					
-000087 d00c      	rcall Laddarad				
-000088 985b      	cbi ROW5_PORT, ROW5_PINOUT
+000086 9a5b      	sbi ROW5_PORT, ROW5_PINOUT
+000087 910d      	ld rTemp, X+	
+000088 8308      	st Y, rTemp					
+000089 d00c      	rcall Laddarad				
+00008a 985b      	cbi ROW5_PORT, ROW5_PINOUT
                  	
-000089 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
-00008a 910d      	ld rTemp, X+	
-00008b 8308      	st Y, rTemp					
-00008c d007      	rcall Laddarad				
-00008d 985c      	cbi ROW6_PORT, ROW6_PINOUT
+00008b 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
+00008c 910d      	ld rTemp, X+	
+00008d 8308      	st Y, rTemp					
+00008e d007      	rcall Laddarad				
+00008f 985c      	cbi ROW6_PORT, ROW6_PINOUT
                  
-00008e 9a5d      	sbi ROW7_PORT, ROW7_PINOUT
-00008f 910c      	ld rTemp, X	
-000090 8308      	st Y, rTemp					
-000091 d002      	rcall Laddarad				
-000092 985d      	cbi ROW7_PORT, ROW7_PINOUT 
+000090 9a5d      	sbi ROW7_PORT, ROW7_PINOUT
+000091 910c      	ld rTemp, X	
+000092 8308      	st Y, rTemp					
+000093 d002      	rcall Laddarad				
+000094 985d      	cbi ROW7_PORT, ROW7_PINOUT 
                  
+<<<<<<< HEAD
 000093 9508      	ret
+>>>>>>> refs/remotes/origin/master
+=======
+000095 9508      	ret
 >>>>>>> refs/remotes/origin/master
                  
                  ; Subrutin för att tända specade lampor
                  Laddarad:
                  
+<<<<<<< HEAD
 <<<<<<< HEAD
 000089 8118      	ld rMellan, Y ; rMellan = Y
                  
@@ -1424,36 +1439,39 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
                  	ldi rTemp, 0b11001011
 =======
 000094 8118      	ld rMellan, Y ; rMellan = Y
+=======
+000096 8118      	ld rMellan, Y ; rMellan = Y
+>>>>>>> refs/remotes/origin/master
                  
-000095 fb17      	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
-000096 f946      	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
+000097 fb17      	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+000098 f946      	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
                  
-000097 fb16      	bst rMellan, 6
-000098 f947      	bld rPORTD, 7
+000099 fb16      	bst rMellan, 6
+00009a f947      	bld rPORTD, 7
                  	
-000099 fb15      	bst rMellan, 5
-00009a f920      	bld rPORTB, 0
+00009b fb15      	bst rMellan, 5
+00009c f920      	bld rPORTB, 0
                  	
-00009b fb14      	bst rMellan, 4
-00009c f921      	bld rPORTB, 1
+00009d fb14      	bst rMellan, 4
+00009e f921      	bld rPORTB, 1
                  	
-00009d fb13      	bst rMellan, 3
-00009e f922      	bld rPORTB, 2
+00009f fb13      	bst rMellan, 3
+0000a0 f922      	bld rPORTB, 2
                  	
-00009f fb12      	bst rMellan, 2
-0000a0 f923      	bld rPORTB, 3
+0000a1 fb12      	bst rMellan, 2
+0000a2 f923      	bld rPORTB, 3
                  	
-0000a1 fb11      	bst rMellan, 1
-0000a2 f924      	bld rPORTB, 4
+0000a3 fb11      	bst rMellan, 1
+0000a4 f924      	bld rPORTB, 4
                  	
-0000a3 fb10      	bst rMellan, 0 ; LSB
-0000a4 f925      	bld rPORTB, 5
+0000a5 fb10      	bst rMellan, 0 ; LSB
+0000a6 f925      	bld rPORTB, 5
                  
                  	; Outputta den manipulerade bitsträngen?
-0000a5 b94b      	out PORTD, rPORTD
-0000a6 b925      	out PORTB, rPORTB
+0000a7 b94b      	out PORTD, rPORTD
+0000a8 b925      	out PORTB, rPORTB
                  
-0000a7 9508      	ret
+0000a9 9508      	ret
                  
                  isr_timerOF: ; Hantera timer-interupt
                  
@@ -1497,7 +1515,7 @@ r21:   1 r22:   4 r23:   0 r24:   4 r25:   0 r26:   2 r27:   2 r28:   0
 =======
 x  :   9 y  :   9 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  40 r17:   9 r18:   7 r19:   0 r20:   3 
+r13:   0 r14:   0 r15:   0 r16:  42 r17:   9 r18:   7 r19:   0 r20:   3 
 r21:   1 r22:   4 r23:   0 r24:   6 r25:   0 r26:   2 r27:   2 r28:   0 
 >>>>>>> refs/remotes/origin/master
 r29:   0 r30:   0 r31:   0 
@@ -1525,7 +1543,7 @@ sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0
 sez   :   0 sleep :   0 spm   :   0 st    :  16 std   :   0 sts   :   2 
 =======
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   3 
-ld    :   9 ldd   :   0 ldi   :  21 lds   :   2 lpm   :   0 lsl   :   0 
+ld    :   9 ldd   :   0 ldi   :  23 lds   :   2 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   3 or    :   0 ori   :   0 out   :  10 pop   :   0 
 push  :   0 rcall :   9 ret   :   2 reti  :   1 rjmp  :   1 rol   :   0 
@@ -1541,9 +1559,13 @@ Instructions used: 18 out of 113 (15.9%)
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
 <<<<<<< HEAD
+<<<<<<< HEAD
 [.cseg] 0x000000 0x00013a    216      0    216   32768   0.7%
 =======
 [.cseg] 0x000000 0x000152    246      0    246   32768   0.8%
+>>>>>>> refs/remotes/origin/master
+=======
+[.cseg] 0x000000 0x000156    250      0    250   32768   0.8%
 >>>>>>> refs/remotes/origin/master
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%

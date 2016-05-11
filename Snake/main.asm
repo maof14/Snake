@@ -150,6 +150,7 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 
 	; ATMEGA BEGINNERS sida 62 
 	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
+
 	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
 	ldi rmp, 0x00					; reset
 	ldi rmp,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
@@ -212,15 +213,17 @@ render:
 
 =======
 	// Välj källa (Y-axel)
+	ldi rTemp, 0x00
 	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
 	sts ADMUX, rTemp
 	// Välj källa slut
 
-	ldi rTemp, 0x00 ; Reset rTemp
+	ldi rTemp, 0x00		; Reset rTemp
 	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
 	sts ADCSRA, rTemp	; Ladda in
 	
 iterate:
+	ldi rTemp, 0x00
 	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
 	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
 	jmp iterate			; Iterera
@@ -234,7 +237,7 @@ iterate:
 	; Endast ADCL behöver läsas då dessa är de lägre 8 bitarna. 
 
 	// Testa att skicka ut datat. 
-	st X, rTemp ; X+ ?
+	st X+, rTemp ; X+ ?
 
 	rcall render
 
