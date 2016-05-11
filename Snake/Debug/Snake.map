@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 10:21:12 2016
+=======
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 11:06:36 2016
+>>>>>>> refs/remotes/origin/master
 
 
 EQU  SIGNATURE_000 0000001e
@@ -758,6 +762,14 @@ EQU  ROW7_PINOUT  00000005
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
+<<<<<<< HEAD
 CSEG main         0000004a
 CSEG render       0000005e
 CSEG Laddarad     00000089
+=======
+CSEG isr_timerOF  000000a8
+CSEG main         00000054
+CSEG iterate      0000005d
+CSEG render       00000069
+CSEG Laddarad     00000094
+>>>>>>> refs/remotes/origin/master

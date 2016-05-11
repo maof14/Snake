@@ -22,11 +22,22 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
+<<<<<<< HEAD
   <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>103</LINE></matrix>
   <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>104</LINE></snake>
   <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></init>
   <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>164</LINE></main>
   <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>200</LINE></render>
   <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>260</LINE></Laddarad>
+=======
+  <matrix><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>103</LINE></matrix>
+  <snake><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>104</LINE></snake>
+  <init><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></init>
+  <isr_timerOF><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>294</LINE></isr_timerOF>
+  <main><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>168</LINE></main>
+  <iterate><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>183</LINE></iterate>
+  <render><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>203</LINE></render>
+  <Laddarad><FILE>C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>260</LINE></Laddarad>
+>>>>>>> refs/remotes/origin/master
  </LABELS>
 </ASSEMBLER_INFO>

@@ -123,11 +123,14 @@ init: ; Initiering av värden, och vad som ska hända med timern.
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 	// Stackpekare slut
+<<<<<<< HEAD
 /*
 	; Konfigurera high resp. low för Y-registret. 
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 */
+=======
+>>>>>>> refs/remotes/origin/master
 
 	; Initiera lite värden
 	ldi rNoll, 0b00000000
@@ -146,28 +149,37 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 	out PORTB, rNoll
 	out PORTC, rNoll
 	out PORTD, rNoll
-	
+
 	; ATMEGA BEGINNERS sida 62 
 	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
-
-	; 1. Konfigurera pre-scaling genom att sätta big 0-2 i TCCR0B
+	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
+	ldi rmp, 0x00					; reset
 	ldi rmp,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
 	sts TCCR0B, rmp	
-
 	; 2. Aktivera globala avbrott genom instruktionen sei
 	sei
-
 	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
+	ldi rmp, 0x00
 	ldi rmp, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
 	sts TIMSK0, rmp					; sts = out-instruktion fast för icke extendat I/O-space
 
+	// Konfiguration av A/D-omvandlaren
+	ldi rTemp, 0x00
+	ldi rTemp,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
+	sts ADMUX, rTemp
+
+	ldi rTemp, 0x00
+	ldi rTemp,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
+	sts ADCSRA, rTemp
+	// Konfiguration av A/D-omvandlaren slut. 
+
 main:
-	
 	; Vad ska den göra här egentligen?
 
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
+<<<<<<< HEAD
 	ldi rTemp, 0b10101010
 	st X+, rTemp
 
@@ -201,6 +213,38 @@ render:
 /*	ldi rTemp, 0xff */
 
 
+=======
+	// Välj källa (Y-axel)
+	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
+	sts ADMUX, rTemp
+	// Välj källa slut
+
+	ldi rTemp, 0x00 ; Reset rTemp
+	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
+	sts ADCSRA, rTemp	; Ladda in
+	
+iterate:
+	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
+	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
+	jmp iterate			; Iterera
+	nop
+
+	; om biten är skippad kommer vi hit... 
+
+	; Läsa bit från den utökade I/O-rymden...
+	ldi rTemp, 0x00		; Nollställ rTemp
+	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+	; Endast ADCL behöver läsas då dessa är de lägre 8 bitarna. 
+
+	// Testa att skicka ut datat. 
+	st X, rTemp ; X+ ?
+
+	rcall render
+
+	rjmp main
+
+render:
+>>>>>>> refs/remotes/origin/master
 
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
@@ -290,15 +334,21 @@ Laddarad:
 	out PORTB, rPORTB
 
 	ret
+<<<<<<< HEAD
 /*
 isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0. 
+=======
 
-	ldi rTemp, 0b11001011
+isr_timerOF: ; Hantera timer-interupt
+>>>>>>> refs/remotes/origin/master
+
+	; Sätt rTemp till något nytt. 
+	/*ldi rTemp, 0b11001011
 
 	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
 	st Y, rTemp
 	rcall Laddarad
-	cbi ROW1_PORT, ROW1_PINOUT
+	cbi ROW1_PORT, ROW1_PINOUT */
 
 	reti ; (Return from interrupt)
 
