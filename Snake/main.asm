@@ -112,145 +112,77 @@ snake:    .BYTE MAX_LENGTH+1
      jmp init // Reset vector
 	 nop
 .ORG 0x0020
-	 // jmp isr_timerOF // ska vara med enligt referensmanual.. ?
-	 // nop
-//... fler interrupts
+	 jmp isr_timerOF ; Interrupt subroutine
+	 nop
+// ... fler interrupts
 .ORG INT_VECTORS_SIZE
-init:
+init: ; Initiering av värden, och vad som ska hända med timern. 
      // Sätt stackpekaren till högsta minnesadressen
-     ldi rTemp, HIGH(RAMEND)
-     out SPH, rTemp
-     ldi rTemp, LOW(RAMEND)
-     out SPL, rTemp
-// */
+    ldi rTemp, HIGH(RAMEND)
+    out SPH, rTemp
+    ldi rTemp, LOW(RAMEND)
+    out SPL, rTemp
+	// Stackpekare slut
 
-/* ATMEGA BEGINNERS sida 62*/ /*
-	ldi rTemp, 1<<TOIE0
-	out TIMSK, rTemp
-	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
-	out TCCR0, rTemp
+	; Konfigurera high resp. low för Y-registret. 
+	ldi YH, HIGH(matrix)
+	ldi YL, LOW(matrix)
 
-	*/
+	; Initiera lite värden
+	ldi rNoll, 0b00000000
+	ldi r21, 0b00000001
+	ldi rTemp, 0b11111111
 
-	
-	ldi rNoll, 0x00
-	ldi r21, 0x01
-	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
-	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
-	out DDRC, r16
-	out DDRD, r16
-
-	
-
-	
+	out DDRB, rTemp ; Sätt alla I/O-portar till output? (ettor på allt)
+	out DDRC, rTemp
+	out DDRD, rTemp
 
 	; Sätter joystickar till input!
 	cbi DDRC, PC4 ; 
 	cbi DDRC, PC5 //DDR klar
 
-
+	; Sätter LED-portar till output. 
 	out PORTB, rNoll
 	out PORTC, rNoll
 	out PORTD, rNoll
+	
+	; ATMEGA BEGINNERS sida 62 
+	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
+
+	; 1. Konfigurera pre-scaling genom att sätta big 0-2 i TCCR0B
+	ldi rmp,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
+	sts TCCR0B, rmp	
+
+	; 2. Aktivera globala avbrott genom instruktionen sei
+	sei
+
+	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
+	ldi rmp, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
+	sts TIMSK0, rmp					; sts = out-instruktion fast för icke extendat I/O-space
 
 main:
-	/* ATMEGA BEGINNERS sida 62 */
-	ldi rmp, 1<<TOIE0
-	sts TIMSK0, rmp		; out-instruktion fast för icke extendat I/O-space. Eller kanske tvärtom?
-	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
-	sts TCCR0B, rTemp	; --|--
-	sei
-Render:
+	
+	; Vad ska den göra här egentligen?
+
+render:
+	ldi rTemp, 0xff
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
-	
-	ldi YH, HIGH(matrix)
-	ldi YL, LOW(matrix)
-	ldi r16, 0x6e
-	/*
-
-	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
-	sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
-	rcall Laddarad		; Kör subrutin
-	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
-	rcall Laddarad		; Kör subrutin
-	cbi PORTC, PC0		; Avaktivera PORTC, bit 1 (index 0)
-
-	st Y, r21			; Speca igen vilka lampor som skall lysa (00000001)
-	sbi PORTC, PC1		; Aktivera PORTC
-	rcall Laddarad		; Kör subrutin
-	st Y, r22			; 00000000
-	rcall Laddarad		; 
-	cbi PORTC, PC1	; Avaktivera
-
-	st Y, r16			; 
-	sbi PORTD, PD2		; 
-	rcall Laddarad		; 
-
-	cbi PORTD, PD2		; 
-	st Y, r22			; 
-	rcall Laddarad		; 
-	*/
-	/*ldi rTemp, 0x07
-	cp RenderctrlA, rTemp
-	breq equal
-*/	
 	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-	st y, r16					; Sätt vilka lampor ska lysa
-	rcall Laddarad				; Ladda raden
-	cbi ROW0_PORT, ROW0_PINOUT	; Rensa raden
+	st Y, rTemp					; Sätt vilka lampor ska lysa ()
+	rcall Laddarad				; Ladda raden genom subrutin
+	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
 
-	sbi ROW6_PORT, ROW6_PINOUT
-	st y, r16
-	rcall Laddarad
-	cbi ROW6_PORT, ROW6_PINOUT
-	
-	/*sbi PORTC, PC2
-	st Y, r16
-	rcall Laddarad
-	cbi PORTC, PC2
-	
-	sbi PORTC, PC3
-	st Y, r16
-	rcall Laddarad
-	cbi PORTC, PC3
-	
-	sbi PORTD, PD2
-	st Y, r16
-	rcall Laddarad
-	cbi PORTD, PD2
-	
-	sbi PORTD, PD3
-	st Y, r16
-	rcall Laddarad
-	cbi PORTD, PD3
-	
-	sbi PORTD, PD4
-	st Y, r16
-	rcall Laddarad
-	cbi PORTD, PD4
-	
-	sbi PORTD, PD5
-	st Y, r16
-	rcall Laddarad
-	cbi PORTD, PD5 */
-
-
-
-	;equal: ret
-
-	rjmp	Render
+	rjmp	render
 	nop
 
-	; Subrutin för att tända specade lampor
+; Subrutin för att tända specade lampor
 Laddarad:
+
 	ld rMellan, Y ; rMellan = Y
 
-	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
-	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
-
-	bst rMellan, 7 ; MSB
-	bld rPORTD, 6
+	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
 
 	bst rMellan, 6
 	bld rPORTD, 7
@@ -278,3 +210,14 @@ Laddarad:
 	out PORTB, rPORTB
 
 	ret
+
+isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0. 
+
+	ldi rTemp, 0b11001011
+
+	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
+	st Y, rTemp
+	rcall Laddarad
+	cbi ROW1_PORT, ROW1_PINOUT
+
+	reti ; (Return from interrupt)
