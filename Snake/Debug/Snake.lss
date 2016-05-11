@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 03 12:42:57 2016
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 11 11:06:36 2016
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
                  
@@ -1097,170 +1097,194 @@ AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.
 000000 940c 0034      jmp init // Reset vector
 000002 0000      	 nop
                  .ORG 0x0020
-                 	 // jmp isr_timerOF // ska vara med enligt referensmanual.. ?
-                 	 // nop
-                 //... fler interrupts
+000020 940c 00a8 	 jmp isr_timerOF ; Interrupt subroutine
+000022 0000      	 nop
+                 // ... fler interrupts
                  .ORG INT_VECTORS_SIZE
-                 init:
+                 init: ; Initiering av värden, och vad som ska hända med timern. 
                       // Sätt stackpekaren till högsta minnesadressen
-000034 e008           ldi rTemp, HIGH(RAMEND)
-000035 bf0e           out SPH, rTemp
-000036 ef0f           ldi rTemp, LOW(RAMEND)
-000037 bf0d           out SPL, rTemp
-                 // */
+000034 e008          ldi rTemp, HIGH(RAMEND)
+000035 bf0e          out SPH, rTemp
+000036 ef0f          ldi rTemp, LOW(RAMEND)
+000037 bf0d          out SPL, rTemp
+                 	// Stackpekare slut
                  
-                 /* ATMEGA BEGINNERS sida 62*/ /*
-                 	ldi rTemp, 1<<TOIE0
-                 	out TIMSK, rTemp
-                 	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
-                 	out TCCR0, rTemp
+                 	; Initiera lite värden
+000038 e060      	ldi rNoll, 0b00000000
+000039 e051      	ldi r21, 0b00000001
+00003a ef0f      	ldi rTemp, 0b11111111
                  
-                 	*/
-                 
-                 	
-000038 e060      	ldi rNoll, 0x00
-000039 e051      	ldi r21, 0x01
-00003a ef0f      	ldi r16, 0xff ; Sätt r16 (rTemp) till 11111111 (255)
-00003b b904      	out DDRB, r16 ; Sätt alla I/O-portar till output? (ettor på allt)
-00003c b907      	out DDRC, r16
-00003d b90a      	out DDRD, r16
-                 
-                 	
-                 
-                 	
+00003b b904      	out DDRB, rTemp ; Sätt alla I/O-portar till output? (ettor på allt)
+00003c b907      	out DDRC, rTemp
+00003d b90a      	out DDRD, rTemp
                  
                  	; Sätter joystickar till input!
 00003e 983c      	cbi DDRC, PC4 ; 
 00003f 983d      	cbi DDRC, PC5 //DDR klar
                  
-                 
+                 	; Sätter LED-portar till output. 
 000040 b965      	out PORTB, rNoll
 000041 b968      	out PORTC, rNoll
 000042 b96b      	out PORTD, rNoll
                  
+                 	; ATMEGA BEGINNERS sida 62 
+                 	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
+                 	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
+000043 e080      	ldi rmp, 0x00					; reset
+000044 e085      	ldi rmp,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
+000045 9380 0025 	sts TCCR0B, rmp	
+                 	; 2. Aktivera globala avbrott genom instruktionen sei
+000047 9478      	sei
+                 	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
+000048 e080      	ldi rmp, 0x00
+000049 e081      	ldi rmp, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
+00004a 9380 006e 	sts TIMSK0, rmp					; sts = out-instruktion fast för icke extendat I/O-space
+                 
+                 	// Konfiguration av A/D-omvandlaren
+00004c e000      	ldi rTemp, 0x00
+00004d e600      	ldi rTemp,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
+00004e 9300 007c 	sts ADMUX, rTemp
+                 
+000050 e000      	ldi rTemp, 0x00
+000051 e807      	ldi rTemp,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
+000052 9300 007a 	sts ADCSRA, rTemp
+                 	// Konfiguration av A/D-omvandlaren slut. 
+                 
                  main:
-                 	/* ATMEGA BEGINNERS sida 62 */
-000043 e081      	ldi rmp, 1<<TOIE0
-000044 9380 006e 	sts TIMSK0, rmp		; out-instruktion fast för icke extendat I/O-space. Eller kanske tvärtom?
-000046 e005      	ldi rTemp,(1<<CS00)|(1<<CS02) ;prescales to 1024
-000047 9300 0025 	sts TCCR0B, rTemp	; --|--
-000049 9478      	sei
-                 Render:
+                 	; Vad ska den göra här egentligen?
+                 
+000054 e0b1      	ldi XH, HIGH(matrix)
+000055 e0a0      	ldi XL, LOW(matrix)
+                 
+                 	// Välj källa (Y-axel)
+000056 e004      	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
+000057 9300 007c 	sts ADMUX, rTemp
+                 	// Välj källa slut
+                 
+000059 e000      	ldi rTemp, 0x00 ; Reset rTemp
+00005a e400      	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
+00005b 9300 007a 	sts ADCSRA, rTemp	; Ladda in
+                 	
+                 iterate:
+00005d 9100 007a 	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
+00005f fd06      	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
+000060 940c 005d 	jmp iterate			; Iterera
+000062 0000      	nop
+                 
+                 	; om biten är skippad kommer vi hit... 
+                 
+                 	; Läsa bit från den utökade I/O-rymden...
+000063 e000      	ldi rTemp, 0x00		; Nollställ rTemp
+000064 9100 0078 	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+                 	; Endast ADCL behöver läsas då dessa är de lägre 8 bitarna. 
+                 
+                 	// Testa att skicka ut datat. 
+000066 930c      	st X, rTemp ; X+ ?
+                 
+000067 d001      	rcall render
+                 
+000068 cfeb      	rjmp main
+                 
+                 render:
+                 
+000069 e0b1      	ldi XH, HIGH(matrix)
+00006a e0a0      	ldi XL, LOW(matrix)
                  
                  	; Få översta raden att lysa genom bitmanipulering, bst / bld
+00006b 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+00006c 910d      	ld rTemp, X+
+00006d 8308      	st Y, rTemp					; Sätt vilka lampor ska lysa ()
+00006e d025      	rcall Laddarad				; Ladda raden genom subrutin
+00006f 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
+                 
+000070 9a41      	sbi ROW1_PORT, ROW1_PINOUT
+000071 910d      	ld rTemp, X+	
+000072 8308      	st Y, rTemp					
+000073 d020      	rcall Laddarad				
+000074 9841      	cbi ROW1_PORT, ROW1_PINOUT
+                 
+000075 9a42      	sbi ROW2_PORT, ROW2_PINOUT
+000076 910d      	ld rTemp, X+	
+000077 8308      	st Y, rTemp					
+000078 d01b      	rcall Laddarad				
+000079 9842      	cbi ROW2_PORT, ROW2_PINOUT
+                 
+00007a 9a43      	sbi ROW3_PORT, ROW3_PINOUT
+00007b 910d      	ld rTemp, X+	
+00007c 8308      	st Y, rTemp					
+00007d d016      	rcall Laddarad				
+00007e 9843      	cbi ROW3_PORT, ROW3_PINOUT
+                 
+00007f 9a5a      	sbi ROW4_PORT, ROW4_PINOUT
+000080 910d      	ld rTemp, X+	
+000081 8308      	st Y, rTemp					
+000082 d011      	rcall Laddarad				
+000083 985a      	cbi ROW4_PORT, ROW4_PINOUT
+                 
+000084 9a5b      	sbi ROW5_PORT, ROW5_PINOUT
+000085 910d      	ld rTemp, X+	
+000086 8308      	st Y, rTemp					
+000087 d00c      	rcall Laddarad				
+000088 985b      	cbi ROW5_PORT, ROW5_PINOUT
                  	
-00004a e0d1      	ldi YH, HIGH(matrix)
-00004b e0c0      	ldi YL, LOW(matrix)
-00004c e60e      	ldi r16, 0x6e
-                 	/*
+000089 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
+00008a 910d      	ld rTemp, X+	
+00008b 8308      	st Y, rTemp					
+00008c d007      	rcall Laddarad				
+00008d 985c      	cbi ROW6_PORT, ROW6_PINOUT
                  
-                 	st Y, r16 ; Y = 11111111 ; Speca vilka lampor som skall lysa (alla)
-                 	sbi PORTC, PC0	; Aktivera PORTC, bit 1 (index 0)
-                 	rcall Laddarad		; Kör subrutin
-                 	st Y, r22			; Speca igen vilka lampor som skall lysa (00000000, inga)
-                 	rcall Laddarad		; Kör subrutin
-                 	cbi PORTC, PC0		; Avaktivera PORTC, bit 1 (index 0)
+00008e 9a5d      	sbi ROW7_PORT, ROW7_PINOUT
+00008f 910c      	ld rTemp, X	
+000090 8308      	st Y, rTemp					
+000091 d002      	rcall Laddarad				
+000092 985d      	cbi ROW7_PORT, ROW7_PINOUT 
                  
-                 	st Y, r21			; Speca igen vilka lampor som skall lysa (00000001)
-                 	sbi PORTC, PC1		; Aktivera PORTC
-                 	rcall Laddarad		; Kör subrutin
-                 	st Y, r22			; 00000000
-                 	rcall Laddarad		; 
-                 	cbi PORTC, PC1	; Avaktivera
+000093 9508      	ret
                  
-                 	st Y, r16			; 
-                 	sbi PORTD, PD2		; 
-                 	rcall Laddarad		; 
-                 
-                 	cbi PORTD, PD2		; 
-                 	st Y, r22			; 
-                 	rcall Laddarad		; 
-                 	*/
-                 	/*ldi rTemp, 0x07
-                 	cp RenderctrlA, rTemp
-                 	breq equal
-                 */	
-00004d 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-00004e 8308      	st y, r16					; Sätt vilka lampor ska lysa
-00004f d007      	rcall Laddarad				; Ladda raden
-000050 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Rensa raden
-                 
-000051 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
-000052 8308      	st y, r16
-000053 d003      	rcall Laddarad
-000054 985c      	cbi ROW6_PORT, ROW6_PINOUT
-                 	
-                 	/*sbi PORTC, PC2
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTC, PC2
-                 	
-                 	sbi PORTC, PC3
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTC, PC3
-                 	
-                 	sbi PORTD, PD2
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTD, PD2
-                 	
-                 	sbi PORTD, PD3
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTD, PD3
-                 	
-                 	sbi PORTD, PD4
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTD, PD4
-                 	
-                 	sbi PORTD, PD5
-                 	st Y, r16
-                 	rcall Laddarad
-                 	cbi PORTD, PD5 */
-                 
-                 
-                 
-                 	;equal: ret
-                 
-000055 cff4      	rjmp	Render
-000056 0000      	nop
-                 
-                 	; Subrutin för att tända specade lampor
+                 ; Subrutin för att tända specade lampor
                  Laddarad:
-000057 8118      	ld rMellan, Y ; rMellan = Y
                  
-                 	; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
-                 	; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
+000094 8118      	ld rMellan, Y ; rMellan = Y
                  
-000058 fb17      	bst rMellan, 7 ; MSB
-000059 f946      	bld rPORTD, 6
+000095 fb17      	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+000096 f946      	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
                  
-00005a fb16      	bst rMellan, 6
-00005b f947      	bld rPORTD, 7
+000097 fb16      	bst rMellan, 6
+000098 f947      	bld rPORTD, 7
                  	
-00005c fb15      	bst rMellan, 5
-00005d f920      	bld rPORTB, 0
+000099 fb15      	bst rMellan, 5
+00009a f920      	bld rPORTB, 0
                  	
-00005e fb14      	bst rMellan, 4
-00005f f921      	bld rPORTB, 1
+00009b fb14      	bst rMellan, 4
+00009c f921      	bld rPORTB, 1
                  	
-000060 fb13      	bst rMellan, 3
-000061 f922      	bld rPORTB, 2
+00009d fb13      	bst rMellan, 3
+00009e f922      	bld rPORTB, 2
                  	
-000062 fb12      	bst rMellan, 2
-000063 f923      	bld rPORTB, 3
+00009f fb12      	bst rMellan, 2
+0000a0 f923      	bld rPORTB, 3
                  	
-000064 fb11      	bst rMellan, 1
-000065 f924      	bld rPORTB, 4
+0000a1 fb11      	bst rMellan, 1
+0000a2 f924      	bld rPORTB, 4
                  	
-000066 fb10      	bst rMellan, 0 ; LSB
-000067 f925      	bld rPORTB, 5
+0000a3 fb10      	bst rMellan, 0 ; LSB
+0000a4 f925      	bld rPORTB, 5
                  
                  	; Outputta den manipulerade bitsträngen?
-000068 b94b      	out PORTD, rPORTD
-000069 b925      	out PORTB, rPORTB
+0000a5 b94b      	out PORTD, rPORTD
+0000a6 b925      	out PORTB, rPORTB
+                 
+0000a7 9508      	ret
+                 
+                 isr_timerOF: ; Hantera timer-interupt
+                 
+                 	; Sätt rTemp till något nytt. 
+                 	/*ldi rTemp, 0b11001011
+                 
+                 	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
+                 	st Y, rTemp
+                 	rcall Laddarad
+                 	cbi ROW1_PORT, ROW1_PINOUT */
                  
 
 
@@ -1279,12 +1303,12 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   3 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   9 y  :   9 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  13 r17:   9 r18:   7 r19:   0 r20:   3 
-r21:   1 r22:   4 r23:   0 r24:   2 r25:   0 r26:   0 r27:   0 r28:   1 
-r29:   1 r30:   0 r31:   0 
-Registers used: 10 out of 35 (28.6%)
+r13:   0 r14:   0 r15:   0 r16:  40 r17:   9 r18:   7 r19:   0 r20:   3 
+r21:   1 r22:   4 r23:   0 r24:   6 r25:   0 r26:   2 r27:   2 r28:   0 
+r29:   0 r30:   0 r31:   0 
+Registers used: 11 out of 35 (31.4%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
@@ -1292,26 +1316,26 @@ andi  :   0 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :   4 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :  10 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   1 
-ld    :   1 ldd   :   0 ldi   :  10 lds   :   0 lpm   :   0 lsl   :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   3 
+ld    :   9 ldd   :   0 ldi   :  21 lds   :   2 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   2 or    :   0 ori   :   0 out   :  10 pop   :   0 
-push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
-sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
+neg   :   0 nop   :   3 or    :   0 ori   :   0 out   :  10 pop   :   0 
+push  :   0 rcall :   9 ret   :   2 reti  :   1 rjmp  :   1 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   8 sbic  :   0 sbis  :   0 
+sbiw  :   0 sbr   :   0 sbrc  :   1 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   2 std   :   0 sts   :   2 
+sez   :   0 sleep :   0 spm   :   0 st    :   9 std   :   0 sts   :   6 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 15 out of 113 (13.3%)
+Instructions used: 18 out of 113 (15.9%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0000d6    116      0    116   32768   0.4%
+[.cseg] 0x000000 0x000152    246      0    246   32768   0.8%
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
