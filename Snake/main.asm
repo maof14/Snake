@@ -123,7 +123,6 @@ init: ; Initiering av värden, och vad som ska hända med timern.
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 	// Stackpekare slut
-<<<<<<< HEAD
 /*
 	; Konfigurera high resp. low för Y-registret. 
 	ldi YH, HIGH(matrix)
@@ -210,8 +209,6 @@ main:
 render:
 /*	ldi rTemp, 0xff */
 
-
-=======
 	// Välj källa (Y-axel)
 	ldi rTemp, 0x00
 	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
@@ -333,12 +330,8 @@ Laddarad:
 	out PORTB, rPORTB
 
 	ret
-/*
-isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0. 
-=======
 
 isr_timerOF: ; Hantera timer-interupt
->>>>>>> refs/remotes/origin/master
 
 	; Sätt rTemp till något nytt. 
 	/*ldi rTemp, 0b11001011
@@ -349,5 +342,3 @@ isr_timerOF: ; Hantera timer-interupt
 	cbi ROW1_PORT, ROW1_PINOUT */
 
 	reti ; (Return from interrupt)
-
-	*/
