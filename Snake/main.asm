@@ -129,8 +129,6 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 */
-=======
->>>>>>> refs/remotes/origin/master
 
 	; Initiera lite värden
 	ldi rNoll, 0b00000000
@@ -179,7 +177,6 @@ main:
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
-<<<<<<< HEAD
 	ldi rTemp, 0b10101010
 	st X+, rTemp
 
@@ -244,7 +241,6 @@ iterate:
 	rjmp main
 
 render:
->>>>>>> refs/remotes/origin/master
 
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
@@ -334,7 +330,6 @@ Laddarad:
 	out PORTB, rPORTB
 
 	ret
-<<<<<<< HEAD
 /*
 isr_timerOF: ; Hantera timer-interupt, släck lamporna på rad 0. 
 =======
