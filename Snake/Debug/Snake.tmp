@@ -22,13 +22,13 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>103</LINE></matrix>
-  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>104</LINE></snake>
-  <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></init>
-  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>175</LINE></main>
-  <iterate><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>217</LINE></iterate>
-  <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>238</LINE></render>
-  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>295</LINE></Laddarad>
-  <isr_timerOF><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>329</LINE></isr_timerOF>
+  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>114</LINE></matrix>
+  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>115</LINE></snake>
+  <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>131</LINE></init>
+  <isr_timerOF><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>353</LINE></isr_timerOF>
+  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>187</LINE></main>
+  <iterate><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>238</LINE></iterate>
+  <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>259</LINE></render>
+  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>319</LINE></Laddarad>
  </LABELS>
 </ASSEMBLER_INFO>

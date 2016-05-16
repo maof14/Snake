@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 16 12:27:15 2016
+AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 16 12:32:42 2016
 
 
 EQU  SIGNATURE_000 0000001e
@@ -701,6 +701,7 @@ DEF  rMellan      r17
 DEF  rPORTB       r18
 DEF  rPORTC       r19
 DEF  rPORTD       r20
+DEF  rSettings    r21
 DEF  rNoll        r22
 DEF  rmp          r24
 DEF  RenderctrlA  r25
@@ -755,11 +756,17 @@ EQU  ROW6_PINOUT  00000004
 EQU  ROW7_DDR     0000000a
 EQU  ROW7_PORT    0000000b
 EQU  ROW7_PINOUT  00000005
+EQU  JOYSTICK_Y_DDR 00000007
+EQU  JOYSTICK_Y_PORT 00000008
+EQU  JOYSTICK_Y_PINOUT 00000004
+EQU  JOYSTICK_X_DDR 00000007
+EQU  JOYSTICK_X_PORT 00000008
+EQU  JOYSTICK_X_PINOUT 00000005
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
-CSEG main         00000054
-CSEG iterate      0000006e
-CSEG render       0000007b
-CSEG Laddarad     000000a6
-CSEG isr_timerOF  000000ba
+CSEG isr_timerOF  000000ae
+CSEG main         00000057
+CSEG iterate      00000069
+CSEG render       00000076
+CSEG Laddarad     0000009a
