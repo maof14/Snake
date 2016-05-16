@@ -8,15 +8,17 @@
 ; Replace with your application code
 // [En lista med registerdefinitioner]
 /* t ex */
-.DEF rTemp         = r16
+.DEF rTemp         = r16 ; Se föreläsning atmega sid 17 - används denna på rätt sätt?
 .DEF rDirection    = r23 ; Används inte
 .DEF rMellan       = r17 ; Används för mellanlagring
 .DEF rPORTB        = r18
 .DEF rPORTC        = r19
 .DEF rPORTD        = r20
+.DEF rSettings	   = r21 ; Att använda
 .DEF rNoll		   = r22
 .DEF rmp		   = r24
 .DEF RenderctrlA   = r25
+ 
 // …
 // */
 // [En lista med konstanter]
@@ -110,10 +112,10 @@ snake:    .BYTE MAX_LENGTH+1
 // Interrupt vector table
 .ORG 0x0000
      jmp init // Reset vector
-	 nop /*
+	 nop 
 .ORG 0x0020
 	 jmp isr_timerOF ; Interrupt subroutine
-	 nop */
+	 nop
 // ... fler interrupts
 .ORG INT_VECTORS_SIZE
 init: ; Initiering av värden, och vad som ska hända med timern. 
@@ -152,25 +154,25 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 	; Timer-konfiguration start
 
 	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
-	ldi rmp, 0x00					; reset
-	ldi rmp,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
-	sts TCCR0B, rmp	
+	ldi rSettings, 0x00					; reset
+	ldi rSettings,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
+	sts TCCR0B, rSettings	
 	; 2. Aktivera globala avbrott genom instruktionen sei
 	sei
 	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
-	ldi rmp, 0x00
-	ldi rmp, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
-	sts TIMSK0, rmp					; sts = out-instruktion fast för icke extendat I/O-space
+	ldi rSettings, 0x00
+	ldi rSettings, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
+	sts TIMSK0, rSettings					; sts = out-instruktion fast för icke extendat I/O-space
 	; Timer-konfiguration slut. 
 
 	// Konfiguration av A/D-omvandlaren
-	ldi rTemp, 0x00
-	ldi rTemp,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
-	sts ADMUX, rTemp
+	ldi rSettings, 0x00
+	ldi rSettings,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
+	sts ADMUX, rSettings
 
-	ldi rTemp, 0x00
-	ldi rTemp,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
-	sts ADCSRA, rTemp
+	ldi rSettings, 0x00
+	ldi rSettings,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
+	sts ADCSRA, rSettings
 	// Konfiguration av A/D-omvandlaren slut. 
 
 main:
@@ -179,7 +181,7 @@ main:
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
-	ldi rTemp, 0b10101010
+	/*ldi rTemp, 0b10101010
 	st X+, rTemp
 
 	ldi rTemp, 0b01010101
@@ -201,34 +203,34 @@ main:
 	st X+, rTemp
 
 	ldi rTemp, 0b01010101
-	st X+, rTemp
+	st X+, rTemp*/
 
 	// Välj källa för joystick (Y-axel)
-	ldi rTemp, 0x00
-	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
-	sts ADMUX, rTemp
+	ldi rSettings, 0x00
+	ldi rSettings,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
+	sts ADMUX, rSettings
 	// Välj källa för joystick, Y-axel, slut
 
-	ldi rTemp, 0x00		; Reset rTemp
-	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
-	sts ADCSRA, rTemp	; Ladda in
+	ldi rSettings, 0x00		; Reset rTemp
+	ldi rSettings,(1<<ADSC) ; Starta konvertering ---> ADSC = 1 (bit 6)
+	sts ADCSRA, rSettings	; Ladda in
 	
 iterate:
-	ldi rTemp, 0x00
-	lds rTemp, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
-	sbrc rTemp, 6		; Kolla om bit 6 är 0 i rTemp (ADCSRA) (Skip next instruction if bit in register is cleared)
+	ldi rSettings, 0x00
+	lds rSettings, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
+	sbrc rSettings, 6		; Kolla om bit 6 (ADSC) är 0 i rTemp (reflekterar ADCSRA) (instruktion = Skip next instruction if bit in register is cleared)
 	jmp iterate			; Iterera
 	nop
 
 	; om biten är skippad kommer vi hit... 
 
 	; Läsa bit från den utökade I/O-rymden...
-	ldi rTemp, 0x00		; Nollställ rTemp
-	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
-	; Endast ADCL behöver läsas då dessa är de lägre 8 bitarna. 
+	ldi rSettings, 0x00		; Nollställ rTemp
+	lds rSettings, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+	; Endast ADCL behöver läsas, tack vare A/D-omvandlaren. 
 
 	// Testa att skicka ut datat. 
-	st X+, rTemp ; X+ ?
+	; st X+, rTemp ; X+ ?
 
 	rcall render
 
