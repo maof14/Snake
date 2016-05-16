@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 16 11:32:14 2016
+AVRASM ver. 2.2.0  C:\Users\Mattias\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 16 12:05:49 2016
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.98\avrasm\inc\m328pdef.inc'
                  
@@ -999,7 +999,7 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
                  .DEF rPORTB        = r18
                  .DEF rPORTC        = r19
                  .DEF rPORTD        = r20
-                 .DEF rSettings	   = r21 ; Att använda
+                 .DEF rSettings	   = r21 ; Att använda när alla inställningar sätts, till exempel timer, joystick etc. 
                  .DEF rNoll		   = r22
                  .DEF rmp		   = r24
                  .DEF RenderctrlA   = r25
@@ -1013,7 +1013,6 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
                  .EQU NUM_ROWS	   = 8 // Mattias
                  .EQU MAX_LENGTH    = 25
                  
-                 ; Mattias i farten nu igen
                  ; Definera namn för alla kolumner för att dessa ska bli enkelt att referera till
                  .EQU COL0_DDR = DDRD
                  .EQU COL0_PORT = PORTD
@@ -1082,6 +1081,16 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
                  .EQU ROW7_PORT = PORTD
                  .EQU ROW7_PINOUT = PD5
                  
+                 ; Joystick namndefinition
+                 
+                 .EQU JOYSTICK_Y_DDR = DDRC
+                 .EQU JOYSTICK_Y_PORT = PORTC
+                 .EQU JOYSTICK_Y_PINOUT = PC4
+                 
+                 .EQU JOYSTICK_X_DDR = DDRC
+                 .EQU JOYSTICK_X_PORT = PORTC
+                 .EQU JOYSTICK_X_PINOUT = PC5
+                 
                  // …
                  // */
                  // [Datasegmentet]
@@ -1099,10 +1108,11 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
 000000 940c 0034      jmp init // Reset vector
 000002 0000      	 nop 
                  .ORG 0x0020
-000020 940c 00b9 	 jmp isr_timerOF ; Interrupt subroutine
+000020 940c 00a7 	 jmp isr_timerOF ; Interrupt subroutine
 000022 0000      	 nop
                  // ... fler interrupts
                  .ORG INT_VECTORS_SIZE
+                 
                  init: ; Initiering av värden, och vad som ska hända med timern. 
                       // Sätt stackpekaren till högsta minnesadressen
 000034 e008          ldi rTemp, HIGH(RAMEND)
@@ -1110,6 +1120,7 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
 000036 ef0f          ldi rTemp, LOW(RAMEND)
 000037 bf0d          out SPL, rTemp
                  	// Stackpekare slut
+                 
                  /*
                  	; Konfigurera high resp. low för Y-registret. 
                  	ldi YH, HIGH(matrix)
@@ -1118,209 +1129,208 @@ AVRASM ver. 2.2.0  C:\Users\Markus\Documents\Atmel Studio\7.0\Snake\Snake\main.a
                  
                  	; Initiera lite värden
 000038 e060      	ldi rNoll, 0b00000000
-000039 e051      	ldi r21, 0b00000001
-00003a ef0f      	ldi rTemp, 0b11111111
+000039 ef0f      	ldi rTemp, 0b11111111
                  
-00003b b904      	out DDRB, rTemp ; Sätt alla I/O-portar till output? (ettor på allt)
-00003c b907      	out DDRC, rTemp
-00003d b90a      	out DDRD, rTemp
+                 	; Sätt alla I/O-portar till output, ettor i DDR representerar output. 
+00003a b904      	out DDRB, rTemp
+00003b b907      	out DDRC, rTemp
+00003c b90a      	out DDRD, rTemp
                  
-                 	; Sätter joystickar till input!
-00003e 983c      	cbi DDRC, PC4 ; 
-00003f 983d      	cbi DDRC, PC5 ;DDR klar
+                 	; Sätter joystickar till input, nolla i DDR representerar input. 
+00003d 983c      	cbi DDRC, PC4 ; 
+00003e 983d      	cbi DDRC, PC5 ; DDR klar
                  
                  	; Avaktiverar alla lampor 
-000040 b965      	out PORTB, rNoll
-000041 b968      	out PORTC, rNoll
-000042 b96b      	out PORTD, rNoll
+00003f b965      	out PORTB, rNoll
+000040 b968      	out PORTC, rNoll
+000041 b96b      	out PORTD, rNoll
                  
-                 	; ATMEGA BEGINNERS sida 62 
-                 	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
                  	; Timer-konfiguration start
-                 
                  	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
-000043 e050      	ldi rSettings, 0x00					; reset
-000044 e055      	ldi rSettings,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
+000042 9150 0025 	lds rSettings, TCCR0B					; ta nuvarande värde på TCCR0B
+000044 e055      	ldi rSettings,(1<<CS00)|(1<<CS02)		; Manipulera de enskilda bitarna i temporär TCCRB0. (prescales to 1024. rSettings = 0b00000101)
 000045 9350 0025 	sts TCCR0B, rSettings	
                  	; 2. Aktivera globala avbrott genom instruktionen sei
 000047 9478      	sei
                  	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
-000048 e050      	ldi rSettings, 0x00
-000049 e051      	ldi rSettings, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
-00004a 9350 006e 	sts TIMSK0, rSettings					; sts = out-instruktion fast för icke extendat I/O-space
+000048 9150 006e 	lds rSettings, TIMSK0					; 
+00004a e051      	ldi rSettings, 1<<TOIE0					; Vad gör denna? rSettings = 0b00000001
+00004b 9350 006e 	sts TIMSK0, rSettings					; sts = out-instruktion fast för icke extendat I/O-space
                  	; Timer-konfiguration slut. 
                  
                  	// Konfiguration av A/D-omvandlaren
-00004c e050      	ldi rSettings, 0x00
-00004d e650      	ldi rSettings,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
-00004e 9350 007c 	sts ADMUX, rSettings
+00004d 9150 007c 	lds rSettings, ADMUX
+00004f e650      	ldi rSettings,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mindre precision)
+000050 9350 007c 	sts ADMUX, rSettings
                  
-000050 e050      	ldi rSettings, 0x00
-000051 e857      	ldi rSettings,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
-000052 9350 007a 	sts ADCSRA, rSettings
+000052 9150 007a 	lds rSettings, ADCSRA
+000054 e857      	ldi rSettings,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
+000055 9350 007a 	sts ADCSRA, rSettings
                  	// Konfiguration av A/D-omvandlaren slut. 
                  
                  main:
                  	; Vad ska den göra här egentligen?
                  
-000054 e0b1      	ldi XH, HIGH(matrix)
-000055 e0a0      	ldi XL, LOW(matrix)
+000057 e0b1      	ldi XH, HIGH(matrix)
+000058 e0a0      	ldi XL, LOW(matrix)
                  
-000056 ea0a      	ldi rTemp, 0b10101010
-000057 930d      	st X+, rTemp
+                 	/*ldi rTemp, 0b10101010
+                 	st X+, rTemp
                  
-000058 e505      	ldi rTemp, 0b01010101
-000059 930d      	st X+, rTemp
+                 	ldi rTemp, 0b01010101
+                 	st X+, rTemp
                  
-00005a ea0a      	ldi rTemp, 0b10101010
-00005b 930d      	st X+, rTemp
+                 	ldi rTemp, 0b10101010
+                 	st X+, rTemp
                  
-00005c e505      	ldi rTemp, 0b01010101
-00005d 930d      	st X+, rTemp
+                 	ldi rTemp, 0b01010101
+                 	st X+, rTemp
                  
-00005e ea0a      	ldi rTemp, 0b10101010
-00005f 930d      	st X+, rTemp
+                 	ldi rTemp, 0b10101010
+                 	st X+, rTemp
                  
-000060 e505      	ldi rTemp, 0b01010101
-000061 930d      	st X+, rTemp
+                 	ldi rTemp, 0b01010101
+                 	st X+, rTemp
                  
-000062 ea0a      	ldi rTemp, 0b10101010
-000063 930d      	st X+, rTemp
+                 	ldi rTemp, 0b10101010
+                 	st X+, rTemp
                  
-000064 e505      	ldi rTemp, 0b01010101
-000065 930d      	st X+, rTemp
+                 	ldi rTemp, 0b01010101
+                 	st X+, rTemp*/
                  
                  	// Välj källa för joystick (Y-axel)
-000066 e050      	ldi rSettings, 0x00
-000067 e054      	ldi rSettings,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
-000068 9350 007c 	sts ADMUX, rSettings
+000059 9150 007c 	lds rSettings, ADMUX
+00005b e054      	ldi rSettings,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
+00005c 9350 007c 	sts ADMUX, rSettings
                  	// Välj källa för joystick, Y-axel, slut
                  
-00006a e050      	ldi rSettings, 0x00		; Reset rTemp
-00006b e450      	ldi rSettings,(1<<ADSC) ; Starta konvertering ---> ADSC = 1 (bit 6)
-00006c 9350 007a 	sts ADCSRA, rSettings	; Ladda in
+00005e 9150 007a 	lds rSettings, ADCSRA		; Reset rSettings
+000060 e450      	ldi rSettings,(1<<ADSC)		; Starta konvertering ---> ADSC = 1 (bit 6)
+000061 9350 007a 	sts ADCSRA, rSettings		; Ladda in
                  	
                  iterate:
-00006e e050      	ldi rSettings, 0x00
-00006f 9150 007a 	lds rSettings, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
-000071 fd56      	sbrc rSettings, 6		; Kolla om bit 6 (ADSC) är 0 i rTemp (reflekterar ADCSRA) (instruktion = Skip next instruction if bit in register is cleared)
-000072 940c 006e 	jmp iterate			; Iterera
-000074 0000      	nop
+000063 9150 007a 	lds rSettings, ADCSRA
+000065 9150 007a 	lds rSettings, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
+000067 fd56      	sbrc rSettings, 6		; Kolla om bit 6 (ADSC) är 0 i rSettings (reflekterar ADCSRA) (instruktion = Skip next instruction if bit in register is cleared) ; Om ej cleared, iterera. 
+000068 940c 0063 	jmp iterate				; Iterera
+00006a 0000      	nop
                  
                  	; om biten är skippad kommer vi hit... 
                  
                  	; Läsa bit från den utökade I/O-rymden...
-000075 e050      	ldi rSettings, 0x00		; Nollställ rTemp
-000076 9150 0078 	lds rSettings, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+                 	; ldi rTemp, 0x00		; Nollställ rSettings
+00006b 9100 0078 	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
                  	; Endast ADCL behöver läsas, tack vare A/D-omvandlaren. 
                  
                  	// Testa att skicka ut datat. 
-                 	; st X+, rTemp ; X+ ?
+00006d 930c      	st X, rTemp ; X+ ?*/
                  
-000078 d001      	rcall render
+00006e d001      	rcall render
                  
-000079 cfda      	rjmp main
+00006f cfe7      	rjmp main
                  
                  render:
-                 	
-00007a e0b1      	ldi XH, HIGH(matrix)
-00007b e0a0      	ldi XL, LOW(matrix)
+                 
+000070 e0b1      	ldi XH, HIGH(matrix)
+000071 e0a0      	ldi XL, LOW(matrix)
+                 
+                 	;ldi rTemp, 0b00000000
                  
                  	; Få översta raden att lysa genom bitmanipulering, bst / bld
-00007c 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-00007d 910d      	ld rTemp, X+
-00007e 8308      	st Y, rTemp					; Sätt vilka lampor ska lysa ()
-00007f d025      	rcall Laddarad				; Ladda raden genom subrutin
-000080 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
+000072 9a40      	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
+                 	;ld rTemp, X+				; Om alla dessa är avkommenterade så lyser det "slumpmässigt". 
+000073 8308      	st Y, rTemp					; Sätt vilka lampor ska lysa ()
+000074 d01e      	rcall Laddarad				; Ladda raden genom subrutin
+000075 9840      	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
                  
-000081 9a41      	sbi ROW1_PORT, ROW1_PINOUT
-000082 910d      	ld rTemp, X+	
+000076 9a41      	sbi ROW1_PORT, ROW1_PINOUT
+                 	;ld rTemp, X+	
+000077 8308      	st Y, rTemp					
+000078 d01a      	rcall Laddarad				
+000079 9841      	cbi ROW1_PORT, ROW1_PINOUT
+                 
+00007a 9a42      	sbi ROW2_PORT, ROW2_PINOUT
+                 	;ld rTemp, X+	
+00007b 8308      	st Y, rTemp					
+00007c d016      	rcall Laddarad				
+00007d 9842      	cbi ROW2_PORT, ROW2_PINOUT
+                 
+00007e 9a43      	sbi ROW3_PORT, ROW3_PINOUT
+                 	;ld rTemp, X+	
+00007f 8308      	st Y, rTemp					
+000080 d012      	rcall Laddarad				
+000081 9843      	cbi ROW3_PORT, ROW3_PINOUT
+                 
+000082 9a5a      	sbi ROW4_PORT, ROW4_PINOUT
+                 	;ld rTemp, X+	
 000083 8308      	st Y, rTemp					
-000084 d020      	rcall Laddarad				
-000085 9841      	cbi ROW1_PORT, ROW1_PINOUT
+000084 d00e      	rcall Laddarad				
+000085 985a      	cbi ROW4_PORT, ROW4_PINOUT
                  
-000086 9a42      	sbi ROW2_PORT, ROW2_PINOUT
-000087 910d      	ld rTemp, X+	
-000088 8308      	st Y, rTemp					
-000089 d01b      	rcall Laddarad				
-00008a 9842      	cbi ROW2_PORT, ROW2_PINOUT
-                 
-00008b 9a43      	sbi ROW3_PORT, ROW3_PINOUT
-00008c 910d      	ld rTemp, X+	
-00008d 8308      	st Y, rTemp					
-00008e d016      	rcall Laddarad				
-00008f 9843      	cbi ROW3_PORT, ROW3_PINOUT
-                 
-000090 9a5a      	sbi ROW4_PORT, ROW4_PINOUT
-000091 910d      	ld rTemp, X+	
-000092 8308      	st Y, rTemp					
-000093 d011      	rcall Laddarad				
-000094 985a      	cbi ROW4_PORT, ROW4_PINOUT
-                 
-000095 9a5b      	sbi ROW5_PORT, ROW5_PINOUT
-000096 910d      	ld rTemp, X+	
-000097 8308      	st Y, rTemp					
-000098 d00c      	rcall Laddarad				
-000099 985b      	cbi ROW5_PORT, ROW5_PINOUT
+000086 9a5b      	sbi ROW5_PORT, ROW5_PINOUT
+                 	;ld rTemp, X+	
+000087 8308      	st Y, rTemp					
+000088 d00a      	rcall Laddarad				
+000089 985b      	cbi ROW5_PORT, ROW5_PINOUT
                  	
-00009a 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
-00009b 910d      	ld rTemp, X+	
-00009c 8308      	st Y, rTemp					
-00009d d007      	rcall Laddarad				
-00009e 985c      	cbi ROW6_PORT, ROW6_PINOUT
+00008a 9a5c      	sbi ROW6_PORT, ROW6_PINOUT
+                 	;ld rTemp, X+	
+00008b 8308      	st Y, rTemp					
+00008c d006      	rcall Laddarad				
+00008d 985c      	cbi ROW6_PORT, ROW6_PINOUT
                  
-00009f 9a5d      	sbi ROW7_PORT, ROW7_PINOUT
-0000a0 910c      	ld rTemp, X	
-0000a1 8308      	st Y, rTemp					
-0000a2 d002      	rcall Laddarad				
-0000a3 985d      	cbi ROW7_PORT, ROW7_PINOUT 
+00008e 9a5d      	sbi ROW7_PORT, ROW7_PINOUT
+                 	;ld rTemp, X	
+00008f 8308      	st Y, rTemp					
+000090 d002      	rcall Laddarad				
+000091 985d      	cbi ROW7_PORT, ROW7_PINOUT 
                  
-0000a4 9508      	ret
+000092 9508      	ret
                  
                  ; Subrutin för att tända specade lampor
                  Laddarad:
                  
-0000a5 8118      	ld rMellan, Y ; rMellan = Y
+000093 8118      	ld rMellan, Y ; rMellan = Y
                  
-0000a6 fb17      	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
-0000a7 f946      	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
+000094 fb17      	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+000095 f946      	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
                  
-0000a8 fb16      	bst rMellan, 6
-0000a9 f947      	bld rPORTD, 7
+000096 fb16      	bst rMellan, 6
+000097 f947      	bld rPORTD, 7
                  	
-0000aa fb15      	bst rMellan, 5
-0000ab f920      	bld rPORTB, 0
+000098 fb15      	bst rMellan, 5
+000099 f920      	bld rPORTB, 0
                  	
-0000ac fb14      	bst rMellan, 4
-0000ad f921      	bld rPORTB, 1
+00009a fb14      	bst rMellan, 4
+00009b f921      	bld rPORTB, 1
                  	
-0000ae fb13      	bst rMellan, 3
-0000af f922      	bld rPORTB, 2
+00009c fb13      	bst rMellan, 3
+00009d f922      	bld rPORTB, 2
                  	
-0000b0 fb12      	bst rMellan, 2
-0000b1 f923      	bld rPORTB, 3
+00009e fb12      	bst rMellan, 2
+00009f f923      	bld rPORTB, 3
                  	
-0000b2 fb11      	bst rMellan, 1
-0000b3 f924      	bld rPORTB, 4
+0000a0 fb11      	bst rMellan, 1
+0000a1 f924      	bld rPORTB, 4
                  	
-0000b4 fb10      	bst rMellan, 0 ; LSB
-0000b5 f925      	bld rPORTB, 5
+0000a2 fb10      	bst rMellan, 0 ; LSB
+0000a3 f925      	bld rPORTB, 5
                  
                  	; Outputta den manipulerade bitsträngen?
-0000b6 b94b      	out PORTD, rPORTD
-0000b7 b925      	out PORTB, rPORTB
+0000a4 b94b      	out PORTD, rPORTD
+0000a5 b925      	out PORTB, rPORTB
                  
-0000b8 9508      	ret
+0000a6 9508      	ret
                  
                  isr_timerOF: ; Hantera timer-interupt
-                 
-                 	; Sätt rTemp till något nytt. 
-                 	/*ldi rTemp, 0b11001011
-                 
-                 	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
-                 	st Y, rTemp
-                 	rcall Laddarad
-                 	cbi ROW1_PORT, ROW1_PINOUT */
+                 		
+0000a7 ef0f      	ldi rTemp, 0xff
+                 	
+0000a8 9a41      	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
+0000a9 910d      	ld rTemp, X+
+0000aa 8308      	st Y, rTemp
+0000ab dfe7      	rcall Laddarad
+0000ac 9841      	cbi ROW1_PORT, ROW1_PINOUT 
                  
 
 
@@ -1339,10 +1349,10 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :  16 y  :   9 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   2 y  :  10 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  40 r17:   9 r18:   7 r19:   0 r20:   3 
-r21:  24 r22:   4 r23:   0 r24:   0 r25:   0 r26:   2 r27:   2 r28:   0 
+r13:   0 r14:   0 r15:   0 r16:  21 r17:   9 r18:   7 r19:   0 r20:   3 
+r21:  21 r22:   4 r23:   0 r24:   0 r25:   0 r26:   2 r27:   2 r28:   0 
 r29:   0 r30:   0 r31:   0 
 Registers used: 10 out of 35 (28.6%)
 
@@ -1352,26 +1362,26 @@ andi  :   0 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :  10 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   8 call  :   0 cbi   :  11 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   3 
-ld    :   9 ldd   :   0 ldi   :  31 lds   :   2 lpm   :   0 lsl   :   0 
+ld    :   2 ldd   :   0 ldi   :  15 lds   :   9 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   3 or    :   0 ori   :   0 out   :  10 pop   :   0 
-push  :   0 rcall :   9 ret   :   2 reti  :   1 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   8 sbic  :   0 sbis  :   0 
+push  :   0 rcall :  10 ret   :   2 reti  :   1 rjmp  :   1 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   9 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   1 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :  16 std   :   0 sts   :   6 
+sez   :   0 sleep :   0 spm   :   0 st    :  10 std   :   0 sts   :   6 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 18 out of 113 (15.9%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000174    280      0    280   32768   0.9%
+[.cseg] 0x000000 0x00015c    256      0    256   32768   0.8%
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

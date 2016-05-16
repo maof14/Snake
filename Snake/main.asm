@@ -14,7 +14,7 @@
 .DEF rPORTB        = r18
 .DEF rPORTC        = r19
 .DEF rPORTD        = r20
-.DEF rSettings	   = r21 ; Att använda
+.DEF rSettings	   = r21 ; Att använda när alla inställningar sätts, till exempel timer, joystick etc. 
 .DEF rNoll		   = r22
 .DEF rmp		   = r24
 .DEF RenderctrlA   = r25
@@ -28,7 +28,6 @@
 .EQU NUM_ROWS	   = 8 // Mattias
 .EQU MAX_LENGTH    = 25
 
-; Mattias i farten nu igen
 ; Definera namn för alla kolumner för att dessa ska bli enkelt att referera till
 .EQU COL0_DDR = DDRD
 .EQU COL0_PORT = PORTD
@@ -97,6 +96,16 @@
 .EQU ROW7_PORT = PORTD
 .EQU ROW7_PINOUT = PD5
 
+; Joystick namndefinition
+
+.EQU JOYSTICK_Y_DDR = DDRC
+.EQU JOYSTICK_Y_PORT = PORTC
+.EQU JOYSTICK_Y_PINOUT = PC4
+
+.EQU JOYSTICK_X_DDR = DDRC
+.EQU JOYSTICK_X_PORT = PORTC
+.EQU JOYSTICK_X_PINOUT = PC5
+
 // …
 // */
 // [Datasegmentet]
@@ -118,6 +127,7 @@ snake:    .BYTE MAX_LENGTH+1
 	 nop
 // ... fler interrupts
 .ORG INT_VECTORS_SIZE
+
 init: ; Initiering av värden, och vad som ska hända med timern. 
      // Sätt stackpekaren till högsta minnesadressen
     ldi rTemp, HIGH(RAMEND)
@@ -125,6 +135,7 @@ init: ; Initiering av värden, och vad som ska hända med timern.
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 	// Stackpekare slut
+
 /*
 	; Konfigurera high resp. low för Y-registret. 
 	ldi YH, HIGH(matrix)
@@ -133,44 +144,41 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 
 	; Initiera lite värden
 	ldi rNoll, 0b00000000
-	ldi r21, 0b00000001
 	ldi rTemp, 0b11111111
 
-	out DDRB, rTemp ; Sätt alla I/O-portar till output? (ettor på allt)
+	; Sätt alla I/O-portar till output, ettor i DDR representerar output. 
+	out DDRB, rTemp
 	out DDRC, rTemp
 	out DDRD, rTemp
 
-	; Sätter joystickar till input!
+	; Sätter joystickar till input, nolla i DDR representerar input. 
 	cbi DDRC, PC4 ; 
-	cbi DDRC, PC5 ;DDR klar
+	cbi DDRC, PC5 ; DDR klar
 
 	; Avaktiverar alla lampor 
 	out PORTB, rNoll
 	out PORTC, rNoll
 	out PORTD, rNoll
 
-	; ATMEGA BEGINNERS sida 62 
-	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
 	; Timer-konfiguration start
-
 	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
-	ldi rSettings, 0x00					; reset
-	ldi rSettings,(1<<CS00)|(1<<CS02)		; prescales to 1024. rmp = 0b00000101
+	lds rSettings, TCCR0B					; ta nuvarande värde på TCCR0B
+	ldi rSettings,(1<<CS00)|(1<<CS02)		; Manipulera de enskilda bitarna i temporär TCCRB0. (prescales to 1024. rSettings = 0b00000101)
 	sts TCCR0B, rSettings	
 	; 2. Aktivera globala avbrott genom instruktionen sei
 	sei
 	; 3. Aktivera overflow-avbrottet för Timer0 genom att sätta bit 0 i TIMSK0 till 1.
-	ldi rSettings, 0x00
-	ldi rSettings, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
+	lds rSettings, TIMSK0					; 
+	ldi rSettings, 1<<TOIE0					; Vad gör denna? rSettings = 0b00000001
 	sts TIMSK0, rSettings					; sts = out-instruktion fast för icke extendat I/O-space
 	; Timer-konfiguration slut. 
 
 	// Konfiguration av A/D-omvandlaren
-	ldi rSettings, 0x00
-	ldi rSettings,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mndre precision)
+	lds rSettings, ADMUX
+	ldi rSettings,(1<<REFS0)|(0<<REFS1)|(1<<ADLAR) ; ADLAR ändrar till 8-bitarsläge för input. (mindre precision)
 	sts ADMUX, rSettings
 
-	ldi rSettings, 0x00
+	lds rSettings, ADCSRA
 	ldi rSettings,(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)|(1<<ADEN)
 	sts ADCSRA, rSettings
 	// Konfiguration av A/D-omvandlaren slut. 
@@ -181,7 +189,7 @@ main:
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
-	ldi rTemp, 0b10101010
+	/*ldi rTemp, 0b10101010
 	st X+, rTemp
 
 	ldi rTemp, 0b01010101
@@ -203,89 +211,91 @@ main:
 	st X+, rTemp
 
 	ldi rTemp, 0b01010101
-	st X+, rTemp
+	st X+, rTemp*/
 
 	// Välj källa för joystick (Y-axel)
-	ldi rSettings, 0x00
+	lds rSettings, ADMUX
 	ldi rSettings,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
 	sts ADMUX, rSettings
 	// Välj källa för joystick, Y-axel, slut
 
-	ldi rSettings, 0x00		; Reset rTemp
-	ldi rSettings,(1<<ADSC) ; Starta konvertering ---> ADSC = 1 (bit 6)
-	sts ADCSRA, rSettings	; Ladda in
+	lds rSettings, ADCSRA		; Reset rSettings
+	ldi rSettings,(1<<ADSC)		; Starta konvertering ---> ADSC = 1 (bit 6)
+	sts ADCSRA, rSettings		; Ladda in
 	
 iterate:
-	ldi rSettings, 0x00
+	lds rSettings, ADCSRA
 	lds rSettings, ADCSRA	; Ta nuvarande ADCSRA för att jämföra
-	sbrc rSettings, 6		; Kolla om bit 6 (ADSC) är 0 i rTemp (reflekterar ADCSRA) (instruktion = Skip next instruction if bit in register is cleared)
-	jmp iterate			; Iterera
+	sbrc rSettings, 6		; Kolla om bit 6 (ADSC) är 0 i rSettings (reflekterar ADCSRA) (instruktion = Skip next instruction if bit in register is cleared) ; Om ej cleared, iterera. 
+	jmp iterate				; Iterera
 	nop
 
 	; om biten är skippad kommer vi hit... 
 
 	; Läsa bit från den utökade I/O-rymden...
-	ldi rSettings, 0x00		; Nollställ rTemp
-	lds rSettings, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
+	; ldi rTemp, 0x00		; Nollställ rSettings
+	lds rTemp, ADCL		; Kopiera resultatet från ADCL. Vad ska vi göra med detta?
 	; Endast ADCL behöver läsas, tack vare A/D-omvandlaren. 
 
 	// Testa att skicka ut datat. 
-	; st X+, rTemp ; X+ ?
+	st X, rTemp ; X+ ?*/
 
 	rcall render
 
 	rjmp main
 
 render:
-	
+
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
+	;ldi rTemp, 0b00000000
+
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
 	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-	ld rTemp, X+
+	;ld rTemp, X+				; Om alla dessa är avkommenterade så lyser det "slumpmässigt". 
 	st Y, rTemp					; Sätt vilka lampor ska lysa ()
 	rcall Laddarad				; Ladda raden genom subrutin
 	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
 
 	sbi ROW1_PORT, ROW1_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW1_PORT, ROW1_PINOUT
 
 	sbi ROW2_PORT, ROW2_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW2_PORT, ROW2_PINOUT
 
 	sbi ROW3_PORT, ROW3_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW3_PORT, ROW3_PINOUT
 
 	sbi ROW4_PORT, ROW4_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW4_PORT, ROW4_PINOUT
 
 	sbi ROW5_PORT, ROW5_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW5_PORT, ROW5_PINOUT
 	
 	sbi ROW6_PORT, ROW6_PINOUT
-	ld rTemp, X+	
+	;ld rTemp, X+	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW6_PORT, ROW6_PINOUT
 
 	sbi ROW7_PORT, ROW7_PINOUT
-	ld rTemp, X	
+	;ld rTemp, X	
 	st Y, rTemp					
 	rcall Laddarad				
 	cbi ROW7_PORT, ROW7_PINOUT 
@@ -328,13 +338,13 @@ Laddarad:
 	ret
 
 isr_timerOF: ; Hantera timer-interupt
-
-	; Sätt rTemp till något nytt. 
-	/*ldi rTemp, 0b11001011
-
+		
+	ldi rTemp, 0xff
+	
 	sbi ROW1_PORT, ROW1_PINOUT	; Aktivera rad 1
+	ld rTemp, X+
 	st Y, rTemp
 	rcall Laddarad
-	cbi ROW1_PORT, ROW1_PINOUT */
+	cbi ROW1_PORT, ROW1_PINOUT 
 
 	reti ; (Return from interrupt)
