@@ -124,7 +124,8 @@ init: ; Initiering av värden, och vad som ska hända med timern.
     out SPL, rTemp
 	// Stackpekare slut
 /*
-	; Konfigurera high resp. low för Y-registret. 
+	Tror inte denna behövs eftersom vi inte använder Y pekaren någonstans
+	; Konfigurera high resp. low för Y-registret.  
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 */
@@ -134,7 +135,7 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 	ldi r21, 0b00000001
 	ldi rTemp, 0b11111111
 
-	out DDRB, rTemp ; Sätt alla I/O-portar till output? (ettor på allt)
+	out DDRB, rTemp ; Sätter alla I/O-portar till output (ettor på allt)
 	out DDRC, rTemp
 	out DDRD, rTemp
 
@@ -177,8 +178,8 @@ main:
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
-	ldi rTemp, 0b10101010
-	st X+, rTemp
+	ldi rTemp, 0b10101010		; Sätter rTemp till nytt värde
+	st X+, rTemp				; Sätter första byten i matrix(x) till rTemp och sätter pekaren till nästa byte
 
 	ldi rTemp, 0b01010101
 	st X+, rTemp
@@ -210,6 +211,8 @@ main:
 	ldi rTemp, 0x00		; Reset rTemp
 	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
 	sts ADCSRA, rTemp	; Ladda in
+
+
 	
 iterate:
 	ldi rTemp, 0x00
@@ -239,7 +242,7 @@ render:
 
 	; Få översta raden att lysa genom bitmanipulering, bst / bld
 	sbi ROW0_PORT, ROW0_PINOUT	; Aktivera rad 0
-	ld rTemp, X+
+	ld rTemp, X+				; Laddar rTemp med värden i första byten av matrix(x) och sätter x pekaren på nästa byte
 	st Y, rTemp					; Sätt vilka lampor ska lysa ()
 	rcall Laddarad				; Ladda raden genom subrutin
 	cbi ROW0_PORT, ROW0_PINOUT	; Avaktivera raden
@@ -334,3 +337,64 @@ isr_timerOF: ; Hantera timer-interupt
 	cbi ROW1_PORT, ROW1_PINOUT */
 
 	reti ; (Return from interrupt)
+
+
+
+	//Simpel main + render för testning//
+	/*
+
+	main:
+
+	rcall render
+
+	rjmp main
+
+
+
+	render:
+
+	ldi rTemp, 0b00000000
+
+
+	sbi ROW0_PORT, ROW0_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW0_PORT, ROW0_PINOUT
+
+
+	sbi ROW1_PORT, ROW1_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW1_PORT, ROW1_PINOUT
+
+	sbi ROW2_PORT, ROW2_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW2_PORT, ROW2_PINOUT
+
+	sbi ROW3_PORT, ROW3_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW3_PORT, ROW3_PINOUT
+
+	sbi ROW4_PORT, ROW4_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW4_PORT, ROW4_PINOUT
+
+	sbi ROW5_PORT, ROW5_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW5_PORT, ROW5_PINOUT
+
+	sbi ROW6_PORT, ROW6_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW6_PORT, ROW6_PINOUT
+
+	sbi ROW7_PORT, ROW7_PINOUT
+	st Y, rTemp					
+	rcall Laddarad				
+	cbi ROW7_PORT, ROW7_PINOUT
+
+	ret */
