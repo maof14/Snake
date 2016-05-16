@@ -149,6 +149,7 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 
 	; ATMEGA BEGINNERS sida 62 
 	; (Man kan kolla vad rmp och rTemp är genom att belysa dem på en rad)
+	; Timer-konfiguration start
 
 	; 1. Konfigurera pre-scaling genom att sätta bit 0-2 i TCCR0B
 	ldi rmp, 0x00					; reset
@@ -160,6 +161,7 @@ init: ; Initiering av värden, och vad som ska hända med timern.
 	ldi rmp, 0x00
 	ldi rmp, 1<<TOIE0				; Vad gör denna? rmp = 0b00000001
 	sts TIMSK0, rmp					; sts = out-instruktion fast för icke extendat I/O-space
+	; Timer-konfiguration slut. 
 
 	// Konfiguration av A/D-omvandlaren
 	ldi rTemp, 0x00
@@ -201,11 +203,11 @@ main:
 	ldi rTemp, 0b01010101
 	st X+, rTemp
 
-	// Välj källa (Y-axel)
+	// Välj källa för joystick (Y-axel)
 	ldi rTemp, 0x00
 	ldi rTemp,(0<<MUX3)|(1<<MUX2)|(0<<MUX1)|(0<<MUX0) ; (0b0100)
 	sts ADMUX, rTemp
-	// Välj källa slut
+	// Välj källa för joystick, Y-axel, slut
 
 	ldi rTemp, 0x00		; Reset rTemp
 	ldi rTemp,(1<<ADSC) ; Starta konvertering ---> ADSC = 1
