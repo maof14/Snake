@@ -22,13 +22,15 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>114</LINE></matrix>
-  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>115</LINE></snake>
+  <matrix><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>115</LINE></matrix>
+  <snake><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>116</LINE></snake>
   <init><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>131</LINE></init>
-  <isr_timerOF><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>353</LINE></isr_timerOF>
-  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>187</LINE></main>
-  <iterate><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>238</LINE></iterate>
-  <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>259</LINE></render>
-  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>319</LINE></Laddarad>
+  <isr_timerOF><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>350</LINE></isr_timerOF>
+  <main><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>181</LINE></main>
+  <iterate_x><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>235</LINE></iterate_x>
+  <render><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>255</LINE></render>
+  <Laddarad><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>315</LINE></Laddarad>
+  <delay><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>362</LINE></delay>
+  <delay_loop><FILE>C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>364</LINE></delay_loop>
  </LABELS>
 </ASSEMBLER_INFO>

@@ -316,28 +316,30 @@ Laddarad:
 
 	ld rMellan, Y ; rMellan = Y
 
-	bst rMellan, 7 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
+	//Läser rMellan åt fel håll? Det funkar, det är det viktigaste//
+
+	bst rMellan, 0 ; MSB ; bst - stores bit b from the Rd (rMellan) to the T flag in SREG (status register)
 	bld rPORTD, 6 ; bld - copies the T flag in the SREG (status register) to bit b in register Rd (rMellan)
 
-	bst rMellan, 6
+	bst rMellan, 1
 	bld rPORTD, 7
 
-	bst rMellan, 5
+	bst rMellan, 2
 	bld rPORTB, 0
 
-	bst rMellan, 4
+	bst rMellan, 3
 	bld rPORTB, 1
 
-	bst rMellan, 3
+	bst rMellan, 4
 	bld rPORTB, 2
 
-	bst rMellan, 2
+	bst rMellan, 5
 	bld rPORTB, 3
 
-	bst rMellan, 1
+	bst rMellan, 6
 	bld rPORTB, 4
 
-	bst rMellan, 0 ; LSB
+	bst rMellan, 7 ; LSB
 	bld rPORTB, 5
 
 	out PORTD, rPORTD ; Outputta den manipulerade bitsträngen?

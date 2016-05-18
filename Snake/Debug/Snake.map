@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Mon May 16 12:32:42 2016
+AVRASM ver. 2.2.0  C:\Users\Kristian\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Wed May 18 09:14:31 2016
 
 
 EQU  SIGNATURE_000 0000001e
@@ -703,8 +703,9 @@ DEF  rPORTC       r19
 DEF  rPORTD       r20
 DEF  rSettings    r21
 DEF  rNoll        r22
-DEF  rmp          r24
+DEF  rDelayCounter r24
 DEF  RenderctrlA  r25
+EQU  ZERO         00000000
 EQU  NUM_COLUMNS  00000008
 EQU  NUM_ROWS     00000008
 EQU  MAX_LENGTH   00000019
@@ -765,8 +766,10 @@ EQU  JOYSTICK_X_PINOUT 00000005
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
-CSEG isr_timerOF  000000ae
+CSEG isr_timerOF  000000a3
 CSEG main         00000057
-CSEG iterate      00000069
-CSEG render       00000076
-CSEG Laddarad     0000009a
+CSEG iterate_x    00000061
+CSEG render       0000006c
+CSEG Laddarad     0000008f
+CSEG delay        000000a4
+CSEG delay_loop   000000a5
